@@ -4,12 +4,41 @@ import { useState } from 'react'
 import { ArrowDown, MapPin } from 'lucide-react'
 import { navResidences } from '@/lib/residences'
 
-const INK = '#FFFFFF'
+const INK = '#1A1A1A'
 const CHAMPAGNE = '#C5A880'
 const PILL_INACTIVE = '#F3F4F6'
 
 export function Hero() {
   const [active, setActive] = useState(navResidences[0].id)
+
+  const handleCapsuleClick = (e: React.MouseEvent, id: string) => {
+  e.preventDefault(); // 阻止默认的生硬锚点跳转
+  setActive(id);      // 激活当前胶囊高亮
+
+  // 1. 找到底下的目标房源卡片元素
+  const cardElement = document.getElementById(id);
+  if (cardElement) {
+    // 2. 丝滑滚动到屏幕中央
+    cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // 3. 滚动需要时间，延迟 500ms 等页面滚到地方后，强行给卡片注入“放大高亮”类名
+    setTimeout(() => {
+      cardElement.classList.add('scale-105', 'shadow-[0_20px_50px_rgba(197,168,128,0.3)]', 'z-10', 'ring-2', 'ring-[#C5A880]');
+    }, 500);
+
+    // 4. 再延迟 400ms（等待放大动画定格），自动模拟人类去点击卡片里的 "View Details" 按钮
+    setTimeout(() => {
+      // 复原卡片样式，准备迎接全屏展开
+      cardElement.classList.remove('scale-105', 'shadow-[0_20px_50px_rgba(197,168,128,0.3)]', 'z-10', 'ring-2', 'ring-[#C5A880]');
+      
+      // 自动寻找卡片里的按钮并模拟点击
+      const viewDetailsBtn = cardElement.querySelector('.view-details-btn') as HTMLElement;
+      if (viewDetailsBtn) {
+        viewDetailsBtn.click(); // 👈 临门一脚，正式全屏进入！
+      }
+    }, 900);
+  }
+};
 
   return (
     <section
@@ -28,19 +57,10 @@ export function Hero() {
       </div>
 
       <div className="mx-auto flex max-w-7xl flex-col items-center px-5 pb-16 pt-32 text-center md:px-8 md:pb-24 md:pt-44">
-        <span
-          className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.2em] backdrop-blur-sm"
-          style={{ backgroundColor: 'rgba(0,0,0,0.4)', color: 'rgba(255,255,255,0.9)' }}
-        >
-          <span
-            className="size-1.5 rounded-full"
-            style={{ backgroundColor: 'rgba(255,255,255,0.6)' }}
-          />
-          Premium Living in Sibu
-        </span>
+          
 
         <h1
-          className="mt-7 max-w-4xl text-balance text-3xl font-semibold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl"
+          className="mt-7 max-w-4xl text-balance text-3xl font-semibold font-serif   leading-[1.1] tracking-tight sm:text-5xl md:text-6xl"
           style={{ color: '#FFFFFF' }}
         >
           Sibu Room Rental
@@ -74,19 +94,19 @@ export function Hero() {
                 <a
                   key={r.id}
                   href={`#${r.id}`}
-                  onClick={() => setActive(r.id)}
-                  className="rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300"
+                  onClick={(e) => handleCapsuleClick(e, r.id)}
+                  className="rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300 transform inline-block hover:scale-105 hover:brightness-125 hover:shadow-[0_4px_12px_rgba(197,168,128,0.2)] active:scale-95"
                   style={
                     isActive
                       ? {
                           backgroundColor: CHAMPAGNE,
-                          color: INK,
+                          color: '#1A1A1A',
                           border: `1px solid ${CHAMPAGNE}`,
                         }
                       : {
-                          backgroundColor: PILL_INACTIVE,
-                          color: INK,
-                          border: '1px solid transparent',
+                          backgroundColor: 'rgba(255,255,255,0.08)',
+                          color: '#FFFFFF',
+                          border: '1px solid rgba(255,255,255,0.1)',
                         }
                   }
                 >

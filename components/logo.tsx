@@ -18,7 +18,7 @@ export function Logo({
           'flex size-9 items-center justify-center rounded-md border transition-colors',
           inverted
             ? 'border-white/20 bg-white/10 text-white group-hover:bg-white group-hover:text-foreground'
-            : 'border-black/10 bg-oat text-foreground group-hover:border-black/20',
+            : 'border-black/10 bg-oat bg-transparent text-white border-white/100 group-hover:border-black/20',
         )}
         aria-hidden="true"
       >
@@ -49,6 +49,7 @@ export function Logo({
           className={cn(
             'mt-0.5 text-[10px] font-medium uppercase tracking-[0.22em]',
             inverted ? 'text-white/55' : 'text-foreground/45',
+            
           )}
         >
           Sibu

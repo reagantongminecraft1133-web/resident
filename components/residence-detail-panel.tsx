@@ -182,7 +182,7 @@ export function ResidenceDetailPanel({
             style={{ color: INK }}
           >
             <ArrowLeft className="size-4" />
-            返回首页
+            Homepage
           </button>
         </div>
 
