@@ -1,7 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, MessageCircle } from 'lucide-react'
+import { useEffect, useState, useMemo } from 'react'
+import { ArrowLeft, MapPin, MessageCircle, Layers, ImageIcon, X, Maximize2 } from 'lucide-react'
 import { buildWhatsAppInquiryUrl } from '@/lib/constants'
 import { getResidenceDetail } from '@/lib/residence-details'
 import type { Residence } from '@/lib/residences'
@@ -12,115 +12,30 @@ const INK = '#1A1A1A'
 const CHAMPAGNE = '#C5A880'
 
 type AmenityKey =
-  | 'amenities'
-  | 'property'
-  | 'security'
-  | 'management'
-  | 'cleaning'
-  | 'parking'
+  | 'propertyType'
+  | 'propertyLayout'
+  | 'roomType'
+  | 'occupancyType'
+  | 'bathroomFacilities'
+  | 'sharedAmenities'
+  | 'deposit'
+  | 'utilities'
 
 const AMENITY_LABELS: Record<AmenityKey, string> = {
-  amenities: 'AMENITIES',
-  property: 'PROPERTY',
-  security: 'SECURITY',
-  management: 'MANAGEMENT',
-  cleaning: 'CLEANING',
-  parking: 'PARKING',
+  propertyType: 'PROPERTY TYPE',
+  propertyLayout: 'PROPERTY LAYOUT',
+  roomType: 'ROOM TYPE',
+  occupancyType: 'OCCUPANCY TYPE',
+  bathroomFacilities: 'BATHROOM FACILITIES',
+  sharedAmenities: 'SHARED AMENITIES',
+  deposit: 'DEPOSIT',
+  utilities: 'UTILITIES',
 }
 
 type Props = {
   residence: Residence
   onClose: () => void
   isClosing?: boolean
-}
-
-function HeroCarousel({ images, alt }: { images: string[]; alt: string }) {
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const [active, setActive] = useState(0)
-
-  const scrollTo = useCallback((index: number) => {
-    const el = scrollRef.current
-    if (!el) return
-    const clamped = Math.max(0, Math.min(index, images.length - 1))
-    el.scrollTo({ left: clamped * el.clientWidth, behavior: 'smooth' })
-    setActive(clamped)
-  }, [images.length])
-
-  const onScroll = useCallback(() => {
-    const el = scrollRef.current
-    if (!el || el.clientWidth === 0) return
-    setActive(Math.round(el.scrollLeft / el.clientWidth))
-  }, [])
-
-  if (images.length === 1) {
-    return (
-      <div className="relative w-full overflow-hidden bg-[#EDECEA]">
-        <img
-          src={images[0] || '/placeholder.svg'}
-          alt={alt}
-          className="aspect-[4/3] w-full object-cover sm:aspect-[16/10]"
-        />
-      </div>
-    )
-  }
-
-  return (
-    <div className="relative w-full bg-[#EDECEA]">
-      <div
-        ref={scrollRef}
-        onScroll={onScroll}
-        className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {images.map((src, i) => (
-          <div key={`${src}-${i}`} className="w-full shrink-0 snap-center">
-            <img
-              src={src || '/placeholder.svg'}
-              alt={`${alt} — ${i + 1}`}
-              className="aspect-[4/3] w-full object-cover sm:aspect-[16/10]"
-            />
-          </div>
-        ))}
-      </div>
-
-      {images.length > 1 && (
-        <>
-          <button
-            type="button"
-            aria-label="Previous photo"
-            onClick={() => scrollTo(active - 1)}
-            className="absolute left-3 top-1/2 hidden size-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-[#1A1A1A] shadow-sm transition-opacity disabled:opacity-0 sm:flex"
-            disabled={active === 0}
-          >
-            <ChevronLeft className="size-5" />
-          </button>
-          <button
-            type="button"
-            aria-label="Next photo"
-            onClick={() => scrollTo(active + 1)}
-            className="absolute right-3 top-1/2 hidden size-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-[#1A1A1A] shadow-sm transition-opacity disabled:opacity-0 sm:flex"
-            disabled={active === images.length - 1}
-          >
-            <ChevronRight className="size-5" />
-          </button>
-
-          <div className="absolute inset-x-0 bottom-4 flex justify-center gap-1.5">
-            {images.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                aria-label={`Go to photo ${i + 1}`}
-                onClick={() => scrollTo(i)}
-                className={cn(
-                  'h-1.5 rounded-full transition-all duration-300',
-                  i === active ? 'w-5 bg-white' : 'w-1.5 bg-white/50',
-                )}
-              />
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  )
 }
 
 export function ResidenceDetailPanel({
@@ -132,10 +47,26 @@ export function ResidenceDetailPanel({
   const detail = getResidenceDetail(residence.id)
   const title = `${residence.name.toUpperCase()} RESIDENCE`
   const whatsAppUrl = buildWhatsAppInquiryUrl(residence.name)
-  const heroImages =
-    detail.heroImages.length > 0
-      ? detail.heroImages
-      : [residence.image || '/placeholder.svg']
+  
+  // 左侧大视窗当前显示的媒体大图
+  const [activeImage, setActiveImage] = useState<string>(
+    detail.heroImages?.[0] || residence.image || '/placeholder.svg'
+  )
+  const [activeItemLabel, setActiveItemLabel] = useState<string>('Overview')
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false)
+
+  // 0ms 秒切预加载舱
+  const allResidenceImages = useMemo(() => {
+    const imgs: string[] = []
+    if (detail.heroImages) imgs.push(...detail.heroImages)
+    if (residence.image) imgs.push(residence.image)
+    if (detail.mapImage) imgs.push(detail.mapImage)
+    detail.floors.forEach((floor) => {
+      floor.commonAreas?.forEach((area) => { if (area.image) imgs.push(area.image) })
+      floor.rooms?.forEach((room) => { if (room.image) imgs.push(room.image) })
+    })
+    return Array.from(new Set(imgs.filter(Boolean)))
+  }, [detail, residence])
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => setVisible(true))
@@ -148,16 +79,19 @@ export function ResidenceDetailPanel({
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') {
+        if (isLightboxOpen) setIsLightboxOpen(false)
+        else onClose()
+      }
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [onClose])
+  }, [onClose, isLightboxOpen])
 
   return (
     <div
       className={cn(
-        'fixed inset-0 z-50 flex flex-col transition-opacity duration-500 ease-out',
+        'fixed inset-0 z-50 flex flex-col md:flex-row transition-opacity duration-500 ease-out md:overflow-hidden',
         visible ? 'opacity-100' : 'opacity-0',
       )}
       style={{ backgroundColor: WARM_CREAM }}
@@ -165,197 +99,245 @@ export function ResidenceDetailPanel({
       aria-modal="true"
       aria-label={`${title} details`}
     >
+      {/* 隐形预加载 */}
+      <div className="pointer-events-none fixed invisible size-0 overflow-hidden" aria-hidden="true">
+        {allResidenceImages.map((src) => (
+          <img key={src} src={src} alt="Preload" />
+        ))}
+      </div>
+
+      {/* 返回首页纽扣 */}
+      <button
+        type="button"
+        onClick={onClose}
+        className="fixed left-4 top-4 z-50 inline-flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur-md px-3.5 py-1.5 text-xs font-semibold shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-zinc-200/80 transition-all duration-300 hover:scale-105 active:scale-95 sm:left-6 sm:top-5"
+        style={{ color: INK }}
+      >
+        <ArrowLeft className="size-3.5" />
+        返回首页
+      </button>
+
+      {/* 左侧大舱：电影级媒体大视窗 */}
+      <div 
+        onClick={() => setIsLightboxOpen(true)}
+        className="group/viewer w-full md:w-[45%] lg:w-[50%] h-[32vh] md:h-full relative bg-zinc-950 shrink-0 overflow-hidden border-b md:border-b-0 md:border-r border-zinc-200/60 cursor-zoom-in"
+      >
+        <img
+          src={activeImage}
+          alt=""
+          className="absolute inset-0 size-full object-cover blur-2xl scale-110 opacity-55 pointer-events-none select-none transition-all duration-500"
+          key={`blur-${activeImage}`}
+        />
+        <img
+          src={activeImage}
+          alt={activeItemLabel}
+          className="relative size-full object-contain z-10 p-3 md:p-6 transition-transform duration-500 group-hover/viewer:scale-[1.01]"
+          key={`fit-${activeImage}`} 
+        />
+        <div className="absolute top-4 right-4 z-20 hidden md:inline-flex size-8 items-center justify-center rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white opacity-0 group-hover/viewer:opacity-100 transition-opacity duration-300">
+          <Maximize2 className="size-3.5" />
+        </div>
+        <div className="absolute bottom-3 left-3 z-20 inline-flex items-center gap-1.5 rounded bg-black/50 backdrop-blur-md px-2 py-1 text-[9px] font-bold uppercase tracking-widest text-white/90 border border-white/5">
+          <ImageIcon className="size-3 text-[#C5A880]" />
+          Viewing: {activeItemLabel}
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/15 pointer-events-none z-15" />
+      </div>
+
+      {/* 右侧大舱 */}
       <div
         className={cn(
-          'flex-1 overflow-y-auto overscroll-contain transition-transform duration-500 ease-out',
+          'flex-1 overflow-y-auto overscroll-contain transition-transform duration-500 ease-out px-4 py-6 md:p-12 pb-36 lg:pb-40',
           visible ? 'translate-y-0' : 'translate-y-4',
         )}
       >
-        {/* 1. Hero — full-bleed, first screen on mobile */}
-        <div className="relative">
-          <HeroCarousel images={heroImages} alt={title} />
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="absolute left-4 top-4 z-10 inline-flex items-center gap-1.5 rounded-full bg-[#F9F9F7]/92 px-3.5 py-2 text-sm font-medium shadow-sm backdrop-blur-sm transition-colors hover:bg-[#F9F9F7] sm:left-6 sm:top-5"
-            style={{ color: INK }}
-          >
-            <ArrowLeft className="size-4" />
-            Homepage
-          </button>
-        </div>
-
-        {/* 2. Title + price + tags — immediately below hero */}
-        <div className="mx-auto max-w-5xl px-5 pb-32 pt-6 md:px-8 md:pt-8 md:pb-36">
-          <header>
-            <h2
-              className="text-balance text-2xl font-semibold leading-tight tracking-[0.04em] sm:text-3xl md:text-4xl"
-              style={{ color: INK }}
-            >
+        <div className="max-w-2xl mx-auto">
+          {/* 顶层头部 */}
+          <header className="pt-2">
+            <h2 className="text-xl font-bold tracking-tight md:text-3xl font-serif text-[#1A1A1A] uppercase">
               {title}
             </h2>
-
-            <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              {detail.priceFrom != null ? (
-                <>
-                  <p className="text-2xl font-semibold tracking-tight sm:text-3xl" style={{ color: INK }}>
-                    RM {detail.priceFrom}
-                    <span className="ml-1 text-base font-normal text-[#1A1A1A]/55 sm:text-lg">
-                      / month
-                    </span>
-                  </p>
-                  <span className="text-xs text-[#1A1A1A]/45">起 · 含基本设施</span>
-                </>
-              ) : (
-                <p className="text-lg font-medium text-[#1A1A1A]/55">
-                  价格即将公布 · 欢迎预约咨询
-                </p>
-              )}
-            </div>
-
-            <div className="mt-5 flex flex-wrap gap-2">
+            <div className="mt-2.5 flex flex-wrap gap-1">
               {detail.highlightTags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full px-3.5 py-1.5 text-xs font-medium"
-                  style={{
-                    color: CHAMPAGNE,
-                    backgroundColor: `${CHAMPAGNE}18`,
-                    border: `1px solid ${CHAMPAGNE}55`,
-                  }}
-                >
+                <span key={tag} className="rounded-full px-2 py-0.5 text-[9px] font-medium border border-[#C5A880]/40 bg-[#C5A880]/10 text-[#C5A880] uppercase tracking-wide">
                   {tag}
                 </span>
               ))}
               {detail.audienceTags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full bg-[#1A1A1A]/[0.06] px-3.5 py-1.5 text-[10px] font-medium uppercase tracking-[0.18em] text-[#1A1A1A]/70"
-                >
+                <span key={tag} className="rounded-full bg-[#1A1A1A]/5 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[#1A1A1A]/60">
                   {tag}
                 </span>
               ))}
             </div>
-
-            <p className="mt-5 max-w-2xl text-base leading-relaxed text-[#1A1A1A]/65">
+            <p className="mt-3.5 text-xs md:text-sm leading-relaxed text-[#1A1A1A]/70">
               {residence.tagline}
             </p>
-            <p className="mt-2 inline-flex items-center gap-1.5 text-sm text-[#1A1A1A]/50">
-              <MapPin className="size-3.5" style={{ color: INK }} />
+            <p className="mt-2 inline-flex items-center gap-1 text-[11px] text-[#1A1A1A]/50">
+              <MapPin className="size-3 text-[#1A1A1A]" />
               {residence.location}
             </p>
           </header>
 
-          {/* 3. Amenities grid */}
-          <section className="mt-10 md:mt-14">
-            <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-[#1A1A1A]/[0.08] bg-[#1A1A1A]/[0.06] md:grid-cols-3">
-              {(Object.keys(AMENITY_LABELS) as AmenityKey[]).map((key) => (
-                <div
-                  key={key}
-                  className="px-4 py-5 md:px-6 md:py-7"
-                  style={{ backgroundColor: WARM_CREAM }}
-                >
-                  <h3
-                    className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[#1A1A1A]/45"
-                  >
-                    {AMENITY_LABELS[key]}
-                  </h3>
-                  <ul className="mt-2.5 space-y-1.5">
-                    {detail.amenityGrid[key].map((item) => (
-                      <li
-                        key={item}
-                        className="text-sm leading-snug text-[#1A1A1A]/80"
-                      >
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+          {/* Specs 大面版 */}
+          <section className="mt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-px overflow-hidden rounded-xl border border-[#1A1A1A]/[0.06] bg-[#1A1A1A]/[0.05]">
+              {(Object.keys(AMENITY_LABELS) as AmenityKey[]).map((key) => {
+                const items = (detail.amenityGrid as any)?.[key] || [];
+                return (
+                  <div key={key} className="px-4 py-3.5 md:px-6 md:py-5" style={{ backgroundColor: WARM_CREAM }}>
+                    <h3 className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#1A1A1A]/40">
+                      {AMENITY_LABELS[key]}
+                    </h3>
+                    <ul className="mt-1.5 space-y-0.5">
+                      {items.length > 0 ? (
+                        items.map((item: string) => (
+                          <li key={item} className="text-xs text-[#1A1A1A]/85 leading-relaxed font-semibold tracking-wide">
+                            {item}
+                          </li>
+                        ))
+                      ) : (
+                        <li className="text-xs text-zinc-300 font-medium">—</li>
+                      )}
+                    </ul>
+                  </div>
+                )
+              })}
             </div>
           </section>
 
-          {/* 4. Floors */}
+          {/* 楼层层级交互 */}
           {detail.floors.length > 0 && (
-            <section className="mt-12 space-y-14 md:mt-16 md:space-y-20">
-              {detail.floors.map((floor) => (
-                <div key={floor.label}>
-                  <h3 className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#1A1A1A]/45">
-                    {floor.label} · Common Areas
-                  </h3>
-                  <div className="mt-4 flex gap-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                    {floor.commonAreas.map((area) => (
-                      <div
-                        key={`${floor.label}-${area.name}`}
-                        className="w-[132px] shrink-0 sm:w-40"
-                      >
-                        <div className="aspect-[3/4] overflow-hidden rounded-xl border border-[#1A1A1A]/[0.08] bg-[#EDECEA]">
-                          <img
-                            src={area.image || '/placeholder.svg'}
-                            alt={`${area.name} at ${title}`}
-                            className="size-full object-cover"
-                          />
-                        </div>
-                        <p className="mt-2.5 text-center text-[11px] font-medium uppercase tracking-[0.16em] text-[#1A1A1A]/70">
-                          {area.name}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+            <section className="mt-10 space-y-10">
+              {detail.floors.map((floor) => {
+                const floorGender: string | undefined = (floor as any).gender;
 
-                  <h3 className="mt-10 text-[11px] font-semibold uppercase tracking-[0.28em] text-[#1A1A1A]/45">
-                    {floor.label} · Rooms
-                  </h3>
-                  <div className="mt-4 space-y-6">
-                    {floor.rooms.map((room) => (
-                      <div
-                        key={`${floor.label}-${room.model}`}
-                        className="overflow-hidden rounded-2xl border border-[#1A1A1A]/[0.08] bg-white/50"
-                      >
-                        <img
-                          src={room.image || '/placeholder.svg'}
-                          alt={room.model}
-                          className="aspect-[16/10] w-full object-cover sm:aspect-[16/9]"
-                        />
-                        <div className="border-t border-[#1A1A1A]/[0.06] px-4 py-3.5 sm:px-5">
-                          <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-[#1A1A1A]/45">
-                            Room Type
-                          </p>
-                          <p
-                            className="mt-1 text-lg font-medium tracking-wide sm:text-xl"
-                            style={{ color: INK }}
-                          >
-                            {room.model}
-                          </p>
-                        </div>
+                return (
+                  <div key={floor.label} className="border-t border-zinc-200/60 pt-8 first:border-t-0 first:pt-0">
+                    
+                    <div className="flex items-center justify-between gap-4 mb-4">
+                      <h4 className="font-serif text-sm font-bold tracking-wide uppercase text-[#1A1A1A]">
+                        {floor.label}
+                      </h4>
+                      {floorGender && (
+                        <span className="px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border bg-zinc-50 border-zinc-200 text-zinc-700">
+                          {floorGender}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Shared Spaces 实体胶囊纽扣设计 */}
+                    <div className="mb-5">
+                      <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-zinc-400 mb-2">
+                        Shared Spaces · 点击切换设施
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {floor.commonAreas?.map((area) => {
+                          const isCurrent = activeItemLabel === `${floor.label} - ${area.name}`
+                          return (
+                            <button
+                              key={`${floor.label}-${area.name}`}
+                              type="button"
+                              onClick={() => {
+                                if (area.image) {
+                                  setActiveImage(area.image)
+                                  setActiveItemLabel(`${floor.label} - ${area.name}`)
+                                }
+                              }}
+                              className={cn(
+                                "inline-flex items-center gap-1 rounded-md border px-2.5 py-1.5 text-xs font-semibold transition-all duration-200 cursor-pointer active:scale-98 focus:outline-none",
+                                isCurrent 
+                                  ? "border-[#C5A880] bg-[#C5A880]/10 text-[#1A1A1A] font-bold shadow-sm" 
+                                  : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300"
+                              )}
+                            >
+                              <Layers className={cn("size-3", isCurrent ? "text-[#C5A880]" : "text-zinc-400")} />
+                              {area.name}
+                            </button>
+                          )
+                        })}
                       </div>
-                    ))}
+                    </div>
+
+                    {/* 房间列表：纯净无框无复读现代无衬线卡片 */}
+                    <div>
+                      <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-zinc-400 mb-2.5">
+                        {floor.label} ROOMS · 点击看对应照片
+                      </p>
+                      
+                      <div className="grid grid-cols-2 gap-2.5">
+                        {floor.rooms?.map((room, roomIdx) => {
+                          const isCurrentRoom = activeItemLabel === `${floor.label} - ${room.name}`
+
+                          return (
+                            <button
+                              key={`${floor.label}-${room.name}-${roomIdx}`}
+                              type="button"
+                              onClick={() => {
+                                if (room.image) {
+                                  setActiveImage(room.image)
+                                  setActiveItemLabel(`${floor.label} - ${room.name}`)
+                                }
+                              }}
+                              className={cn(
+                                "group/room flex items-center justify-between rounded-xl border px-3.5 py-3 text-left transition-all duration-300 cursor-pointer w-full min-h-[48px] focus:outline-none",
+                                isCurrentRoom
+                                  ? "border-[#C5A880] bg-white shadow-[0_6px_20px_rgba(197,168,128,0.12)] ring-2 ring-[#C5A880]/15 z-10"
+                                  : "border-zinc-200 bg-white hover:border-zinc-300"
+                              )}
+                            >
+                              {/* ✂️ 100% 渲染你在 TS 数据文件里清理后的纯净专属房间名，单行利落绝不折行 */}
+                              <span className={cn(
+                                "font-sans text-xs sm:text-sm font-semibold tracking-wide transition-colors truncate max-w-[85%]", 
+                                isCurrentRoom ? "text-[#C5A880]" : "text-[#1A1A1A]"
+                              )}>
+                                {room.name}
+                              </span>
+                              
+                              <ImageIcon className={cn(
+                                "size-3.5 transition-all duration-300 shrink-0", 
+                                isCurrentRoom ? "text-[#C5A880] scale-105" : "text-zinc-300"
+                              )} />
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </section>
           )}
 
-          {/* 5. Map */}
-          <section className="mt-12 pb-8 md:mt-16 md:pb-10">
-            <h3
-              className="text-balance text-lg font-semibold tracking-tight sm:text-xl"
-              style={{ color: INK }}
-            >
+          {/* 360° 外景预留墙设计 */}
+          <section className="mt-10 border-t border-zinc-200/60 pt-8">
+            <h4 className="font-serif text-sm font-bold tracking-wide uppercase text-[#1A1A1A]">
+              360° Exterior Virtual Tour
+            </h4>
+            <p className="text-[11px] text-zinc-400 leading-relaxed mt-1">
+              An immersive 360° exterior surrounding tour of the residence neighborhood will be integrated below.
+            </p>
+            <div className="mt-4 relative aspect-[21/9] w-full overflow-hidden rounded-lg border border-dashed border-zinc-300 bg-zinc-50 flex items-center justify-center transition-all duration-300 hover:bg-white">
+              <Layers className="size-5 text-[#C5A880]/50" />
+              <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-zinc-400 select-none">
+                [ Exterior 360° Panorama View Chamber ]
+              </span>
+            </div>
+          </section>
+
+          {/* 地图定位 */}
+          <section className="mt-10">
+            <h3 className="text-sm font-bold tracking-tight text-[#1A1A1A]">
               Where is {residence.name} Residence?
             </h3>
-            <p className="mt-2 max-w-xl text-sm leading-relaxed text-[#1A1A1A]/55">
-              {detail.mapCaption}
-            </p>
-            <div className="relative mt-5 overflow-hidden rounded-2xl border border-[#1A1A1A]/[0.08] bg-[#EDECEA]">
+            <div className="relative mt-3 overflow-hidden rounded-lg border border-[#1A1A1A]/[0.06] bg-[#EDECEA] aspect-[16/10]">
               <img
                 src={detail.mapImage || '/placeholder.svg'}
-                alt={`Map location for ${title}`}
-                className="aspect-[16/10] w-full object-cover opacity-90 sm:aspect-[16/9]"
+                alt={`Map location`}
+                className="size-full object-cover"
               />
-              <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full border border-[#1A1A1A]/10 bg-[#F9F9F7]/95 px-3.5 py-2 text-sm text-[#1A1A1A]/75 shadow-sm backdrop-blur-sm">
-                <MapPin className="size-4" style={{ color: INK }} />
+              <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full border border-zinc-200 bg-[#F9F9F7]/95 px-2.5 py-1 text-[11px] text-[#1A1A1A]/75 shadow-sm backdrop-blur-sm">
+                <MapPin className="size-3 text-[#1A1A1A]" />
                 {residence.location}
               </div>
             </div>
@@ -363,27 +345,57 @@ export function ResidenceDetailPanel({
         </div>
       </div>
 
-      {/* WhatsApp CTA — logic unchanged */}
+      {/* 底部吸附固定预约看房舱 */}
       <div
         className={cn(
-          'pointer-events-none absolute inset-x-0 bottom-0 z-[60] px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-12 transition-all duration-500 ease-out sm:px-6',
+          'fixed inset-x-0 bottom-0 z-[60] px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 transition-all duration-500 ease-out sm:px-6 md:absolute md:right-0 md:left-auto md:w-[55%] lg:w-[50%]',
           visible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0',
         )}
         style={{
-          background: `linear-gradient(to top, ${WARM_CREAM} 65%, ${WARM_CREAM}00)`,
+          backgroundColor: WARM_CREAM,
+          boxShadow: '0 -12px 30px -5px rgba(249, 249, 247, 0.95)',
+          borderTop: '1px solid rgba(26, 26, 26, 0.04)'
         }}
       >
         <a
           href={whatsAppUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="pointer-events-auto mx-auto flex max-w-2xl items-center justify-center gap-2.5 rounded-full px-5 py-3.5 text-sm font-semibold tracking-wide shadow-md transition-transform duration-300 hover:scale-[1.01] active:scale-[0.98] motion-safe:animate-[pulse-soft_2.5s_ease-in-out_infinite] sm:py-4 sm:text-base"
-          style={{ backgroundColor: CHAMPAGNE, color: INK }}
+          className="mx-auto flex max-w-md items-center justify-center gap-2 rounded-full px-5 py-3 text-xs font-bold tracking-wide shadow-md transition-transform duration-300 active:scale-[0.97] bg-[#C5A880] text-[#1A1A1A] whitespace-nowrap"
         >
-          <MessageCircle className="size-5" />
-          立即预约看房 (Inquire via WhatsApp)
+          <MessageCircle className="size-4 shrink-0" />
+          WhatsApp 预约看房 // Book Tour
         </a>
       </div>
+
+      {/* 灯箱全屏舱 */}
+      {isLightboxOpen && (
+        <div onClick={() => setIsLightboxOpen(false)} className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm transition-opacity duration-300 cursor-zoom-out animate-fade-in">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              setIsLightboxOpen(false)
+            }}
+            className="absolute top-4 right-4 z-[110] inline-flex size-10 items-center justify-center rounded-full bg-white/10 border border-white/10 text-white/80"
+          >
+            <X className="size-5" />
+          </button>
+
+          <div className="w-full h-full max-w-[95vw] max-h-[90vh] flex flex-col items-center justify-center p-2">
+            <img 
+              src={activeImage} 
+              alt={activeItemLabel} 
+              className="max-w-full max-h-full object-contain rounded-md select-none pointer-events-none shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <p className="mt-3 text-xs font-medium tracking-widest text-white/40 uppercase">
+              {residence.name.toUpperCase()} RESIDENCE // {activeItemLabel}
+            </p>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

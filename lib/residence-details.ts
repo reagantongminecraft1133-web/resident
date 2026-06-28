@@ -1,10 +1,12 @@
 export type AmenityGrid = {
-  amenities: string[]
-  property: string[]
-  security: string[]
-  management: string[]
-  cleaning: string[]
-  parking: string[]
+  propertyType: string[]
+  propertyLayout: string[]
+  roomType: string[]
+  occupancyType: string[]
+  bathroomFacilities: string[]
+  sharedAmenities: string[]
+  deposit: string[]
+  utilities: string[]
 }
 
 export type FloorArea = {
@@ -13,7 +15,7 @@ export type FloorArea = {
 }
 
 export type FloorRoom = {
-  model: string
+  name: string  // 👈 你想叫它什么名字，前台就原封不动显示什么名字
   image: string
 }
 
@@ -27,194 +29,426 @@ export type ResidenceDetail = {
   audienceTags: string[]
   /** Core selling-point tags — champagne gold styling only */
   highlightTags: string[]
-  priceFrom: number | null
   heroImages: string[]
   amenityGrid: AmenityGrid
   floors: FloorPlan[]
   mapImage: string
   mapCaption: string
+  mapEmbedUrl?: string   // Google Map 嵌入式 Iframe 链接
+  googleMapsUrl?: string // 真实 Google Map 外跳链接
+  virtualTourUrl?: string // 360 全景嵌入链接（如 Kuula 或 Pannellum）
 }
 
-const commonFirstFloorAreas = (image: string): FloorArea[] => [
-  { name: 'Dining', image },
-  { name: 'Kitchen', image },
-  { name: 'Bathroom', image },
-  { name: 'Corridor', image },
-]
 
 export const residenceDetails: Record<string, ResidenceDetail> = {
   parkway: {
     audienceTags: ['UNDERGRADUATE', 'POSTGRADUATE', 'WORKING ADULT'],
-    highlightTags: ['全家私', '独立卫浴'],
-    priceFrom: 450,
-    heroImages: ['/images/parkway.png', '/images/parkway.png', '/images/parkway.png'],
+    highlightTags: ['Fully Furnished'],
+    heroImages: ['/images/parkway/1st Floor/P1 - Room/P1C - Single Window.png'],
+    // 🌟 完美对齐 8 大硬核租赁指标
     amenityGrid: {
-      amenities: ['Smart Lock', 'High-Speed Wi-Fi'],
-      property: ['Front Yard', 'Laundry Room'],
-      security: ['24/7 CCTV', 'Keycard Access'],
-      management: ['Dedicated Residence Manager'],
-      cleaning: ['Weekly Common Area Cleaning'],
-      parking: ['Motorcycle Bay'],
+      propertyType: ['Shoplot - Fully furnished hostel-style accommodation'],
+      propertyLayout: ['First floor - 7 rooms', 'Second floor - 7 rooms'],
+      
+      roomType: [
+        '5 Single Window',
+        '2 Single Skylight',
+        '4 Double Window',
+        '3 Double Skylight'
+      ],
+      
+      occupancyType: ['Mixed-gender Floors'],
+      bathroomFacilities: ['2 Shared Toilets per Floor'],
+      
+      sharedAmenities: [
+        'Fridge', 
+        'Washing Machine', 
+        'Microwave', 
+        'Induction Cooker',
+        'Shower Heater'
+      ],
+      
+      deposit: ['One and a half month'],
+      utilities: ['Wi-Fi & Water Included', 'Room Electricity Paid by Tenant'],
     },
     floors: [
       {
         label: 'FIRST FLOOR',
-        commonAreas: commonFirstFloorAreas('/images/parkway.png'),
+        commonAreas:[
+          { name: 'Dining', image: '/images/parkway/1st floor/P1 - Common Space/P1 - Dining Room.png' },
+          { name: 'Kitchen', image: '/images/parkway/1st floor/P1 - Common Space/P1 - Kitchen.png' },
+          { name: 'Bathroom', image: '/images/parkway/1st floor/P1 - Common Space/P1 - Bathroom.png' },
+        ],
         rooms: [
-          { model: 'STANDARD SINGLE', image: '/images/parkway.png' },
-          { model: 'DELUXE QUEEN', image: '/images/parkway.png' },
+          { name: 'Room P1A', image: '/images/parkway/1st floor/P1 - Room/P1A - Double Window.png' },
+          { name: 'Room P1B', image: '/images/parkway/1st floor/P1 - Room/P1B - Single Window.png' },
+          { name: 'Room P1C', image: '/images/parkway/1st floor/P1 - Room/P1C - Single Window.png' },
+          { name: 'Room P1D', image: '/images/parkway/1st floor/P1 - Room/P1D - Single Room.png' },
+          { name: 'Room P1E', image: '/images/parkway/1st floor/P1 - Room/P1E - Double Room.png' },
+          { name: 'Room P1F', image: '/images/parkway/1st floor/P1 - Room/P1F - Single Window.png' },
+          { name: 'Room P1G', image: '/images/parkway/1st floor/P1 - Room/P1G - Double Window.png' },
         ],
       },
       {
         label: 'SECOND FLOOR',
-        commonAreas: commonFirstFloorAreas('/images/parkway.png'),
+        commonAreas: [
+          { name: 'Dining', image: '/images/parkway/2nd floor/P2 - Common Space/P2 - Dining Area.png' },
+          { name: 'Kitchen', image: '/images/parkway/2nd floor/P2 - Common Space/P2 - Kitchen.png' },
+          { name: 'Bathroom', image: '/images/parkway/2nd floor/P2 - Common Space/P2 - Bathroom.png' },
+          { name: 'Wash Area', image: '/images/parkway/2nd floor/P2 - Common Space/P2 - Wash Area.png' },
+          { name: 'Corridor', image: '/images/parkway/2nd floor/P2 - Common Space/P2 - Corridor.png' }, // 👈 想要多加的 shared space 示范
+        ],
         rooms: [
-          { model: 'PREMIUM SUITE', image: '/images/parkway.png' },
-          { model: 'CORNER STUDIO', image: '/images/parkway.png' },
+          { name: 'Room P2A', image: '/images/parkway/2nd floor/P2 - Room/P2A - Single Window.png' },
+          { name: 'Room P2B', image: '/images/parkway/2nd floor/P2 - Room/P2B - Double Skylight.png' },
+          { name: 'Room P2C', image: '/images/parkway/2nd floor/P2 - Room/P2C - Double Window.png' },
+          { name: 'Room P2D', image: '/images/parkway/2nd floor/P2 - Room/P2D - Double Skylight.png' },
+          { name: 'Room P2E', image: '/images/parkway/2nd floor/P2 - Room/P2E - Single Window.png' },
+          { name: 'Room P2F', image: '/images/parkway/2nd floor/P2 - Room/P2F - Single Skylight.png' },
+          { name: 'Room P2G', image: '/images/parkway/2nd floor/P2 - Room/P2G - Double Window.png' },
         ],
       },
     ],
     mapImage: '/images/parkway.png',
     mapCaption: 'Sibu Town Centre — steps from the park and daily conveniences.',
+    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3986.36835263636!2d111.8268685!3d2.2934177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31fa4dc467000001%3A0x6b7fa43666b6e410!2sSibu%20Town%20Square!5e0!3m2!1szh-CN!2smy!4v1710000000000!3m2!1szh-CN!2smy',
+    googleMapsUrl: 'https://maps.app.goo.gl/BBNP6vGZf1v66MBy9',
+    virtualTourUrl: ''
   },
+  
   kingsway: {
-    audienceTags: ['POSTGRADUATE', 'WORKING ADULT'],
-    highlightTags: ['全家私', 'City View'],
-    priceFrom: 580,
-    heroImages: ['/images/kingsway.png', '/images/kingsway.png'],
+    audienceTags: ['UNDERGRADUATE', 'POSTGRADUATE', 'WORKING ADULT'],
+    highlightTags: ['Fully Furnished'],
+    heroImages: ['/images/kingsway/1st floor/K1 - Room/K1A - Single Window.png'],
+
     amenityGrid: {
-      amenities: ['Smart Lock', 'Fiber Wi-Fi'],
-      property: ['Sky Lounge', 'Laundry Room'],
-      security: ['CCTV Coverage', 'Secure Entry'],
-      management: ['On-Site Concierge'],
-      cleaning: ['Bi-Weekly Room Cleaning'],
-      parking: ['Covered Car Park'],
+      propertyType: ['Shoplot - Fully furnished hostel-style accommodation'],
+      propertyLayout: ['First floor - 7 rooms', 'Second floor - 7 rooms'],
+      
+      roomType: [
+        '9 Single Window',
+        '2 Single Skylight',
+        '4 Double Window',
+        '1 Double Skylight'
+      ],
+      
+      occupancyType: ['Mixed-gender Floors'],
+      bathroomFacilities: ['2 Shared Toilets per Floor'],
+      
+      sharedAmenities: [
+        'Fridge', 
+        'Washing Machine', 
+        'Microwave', 
+        'Induction Cooker',
+        'Shower Heater'
+      ],
+      
+      deposit: ['One and a half month'],
+      utilities: ['Wi-Fi & Water Included', 'Room Electricity Paid by Tenant'],
     },
     floors: [
       {
         label: 'FIRST FLOOR',
-        commonAreas: commonFirstFloorAreas('/images/kingsway.png'),
+        commonAreas: [
+          { name: 'Dining', image: '/images/kingsway/1st floor/K1 - Common Space/K1 - Dining Area.png' },
+          { name: 'Kitchen', image: '/images/kingsway/1st floor/K1 - Common Space/K1 - Kitchen.png' },
+          { name: 'Foyer', image: '/images/kingsway/1st floor/K1 - Common Space/K1 - Foyer.png' },
+          { name: 'Bathroom', image: '/images/kingsway/1st floor/K1 - Common Space/K1 - Bathroom.png' },
+          { name: 'Corridor', image: '/images/kingsway/1st floor/K1 - Common Space/K1 - Corridor.png' }, // 👈 想要多加的 shared space 示范
+        ],
         rooms: [
-          { model: 'CITY VIEW SINGLE', image: '/images/kingsway.png' },
-          { model: 'EXECUTIVE TWIN', image: '/images/kingsway.png' },
+          { name: 'Room K1A', image: '/images/kingsway/1st floor/K1 - Room/K1A - Single Window.png' },
+          { name: 'Room K1B', image: '/images/kingsway/1st floor/K1 - Room/K1B - Single Window.png' },
+          { name: 'Room K1C', image: '/images/kingsway/1st floor/K1 - Room/K1C - Double Skylight.png' },
+          { name: 'Room K1D', image: '/images/kingsway/1st floor/K1 - Room/K1D - Single Window.png' },
+          { name: 'Room K1E', image: '/images/kingsway/1st floor/K1 - Room/K1E - Single Skylight.png' },
+          { name: 'Room K1F', image: '/images/kingsway/1st floor/K1 - Room/K1F - Single Window.png' },
+          { name: 'Room K1G', image: '/images/kingsway/1st floor/K1 - Room/K1G - Single Window.png' },
         ],
       },
       {
         label: 'SECOND FLOOR',
-        commonAreas: commonFirstFloorAreas('/images/kingsway.png'),
+        commonAreas: [
+          { name: 'Dining', image: '/images/kingsway/2nd floor/K2 - Common Space/K2 - Dining Area.png' },
+          { name: 'Kitchen', image: '/images/kingsway/2nd floor/K2 - Common Space/K2 - Kitchen.png' },
+          { name: 'Bathroom', image: '/images/kingsway/2nd floor/K2 - Common Space/K2 - Bathroom.png' },
+          { name: 'Corridor', image: '/images/kingsway/2nd floor/K2 - Common Space/K2 - Corridor.png' },
+          { name: 'Entrance', image: '/images/kingsway/2nd floor/K2 - Common Space/K2 - Entrance.png' }, // 👈 想要多加的 shared space 示范
+        ],
         rooms: [
-          { model: 'PENTHOUSE STUDIO', image: '/images/kingsway.png' },
+          { name: 'Room K2A', image: '/images/kingsway/2nd floor/K2 - Room/K2A - Single Skylight.png' },
+          { name: 'Room K2B', image: '/images/kingsway/2nd floor/K2 - Room/K2B - Single Window.png' },
+          { name: 'Room K2C', image: '/images/kingsway/2nd floor/K2 - Room/K2C - Double Window.png' },
+          { name: 'Room K2D', image: '/images/kingsway/2nd floor/K2 - Room/K2D - Single Window.png' },
+          { name: 'Room K2E', image: '/images/kingsway/2nd floor/K2 - Room/K2E - Single Skylight.png' },
+          { name: 'Room K2F', image: '/images/kingsway/2nd floor/K2 - Room/K2F - Double Window.png' },
+          { name: 'Room K2G', image: '/images/kingsway/2nd floor/K2 - Room/K2G - Single Window.png' },
         ],
       },
     ],
-    mapImage: '/images/kingsway.png',
-    mapCaption: 'Jln Tunku Abdul Rahman — elevated living with skyline views.',
+    mapImage: '/images/parkway.png',
+    mapCaption: 'Sibu Town Centre — steps from the park and daily conveniences.',
+    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3986.36835263636!2d111.8268685!3d2.2934177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31fa4dc467000001%3A0x6b7fa43666b6e410!2sSibu%20Town%20Square!5e0!3m2!1szh-CN!2smy!4v1710000000000!3m2!1szh-CN!2smy',
+    googleMapsUrl: 'https://maps.app.goo.gl/BBNP6vGZf1v66MBy9',
+    virtualTourUrl: ''
   },
+  
   norway: {
-    audienceTags: ['UNDERGRADUATE', 'POSTGRADUATE'],
-    highlightTags: ['全家私', 'Weekly Cleaning'],
-    priceFrom: 420,
-    heroImages: ['/images/norway.png', '/images/norway.png'],
+    audienceTags: ['UNDERGRADUATE', 'POSTGRADUATE', 'WORKING ADULT'],
+    highlightTags: ['Fully Furnished'],
+    heroImages: ['/images/norway/2nd Floor/N2 - Room/N2I - Double Window.png'],
+
     amenityGrid: {
-      amenities: ['Smart Lock', 'Mesh Wi-Fi'],
-      property: ['Shared Lounge', 'Study Nook'],
-      security: ['Perimeter CCTV', 'Night Patrol'],
-      management: ['Residence Host'],
-      cleaning: ['Weekly Deep Clean'],
-      parking: ['Bicycle Storage'],
+      propertyType: ['Shoplot - Fully furnished hostel-style accommodation'],
+      propertyLayout: ['Second floor - 9 rooms', 'Third floor - 9 rooms'],
+      
+      roomType: [
+        '10 Single Window',
+        '4 Single Skylight',
+        '4 Double Window ',
+      ],
+      
+      occupancyType: ['Mixed-gender Floors'],
+      bathroomFacilities: ['2 Shared Toilets per Floor'],
+      
+      sharedAmenities: [
+        'Fridge', 
+        'Washing Machine', 
+        'Microwave', 
+        'Induction Cooker',
+        'Shower Heater'
+      ],
+      
+      deposit: ['Two months'],
+      utilities: ['Wi-Fi & Water Included', 'Room Electricity Paid by Tenant'],
     },
     floors: [
       {
-        label: 'FIRST FLOOR',
-        commonAreas: commonFirstFloorAreas('/images/norway.png'),
+        label: 'Second Floor',
+        commonAreas: [
+          { name: 'Dining', image: '/images/norway/2nd Floor/N2 - Common Space/N2 - Dining Area.png' },
+          { name: 'Kitchen', image: '/images/norway/2nd Floor/N2 - Common Space/N2 - Kitchen.png' },
+          { name: 'Bathroom', image: '/images/norway/2nd Floor/N2 - Common Space/N2 - Bathroom.png' },
+          { name: 'Corridor', image: '/images/norway/2nd Floor/N2 - Common Space/N2 - Corridor.png' },
+          { name: 'Entrance', image: '/images/norway/2nd Floor/N2 - Common Space/N2 - Entrance.png' }, // 👈 想要多加的 shared space 示范
+        ],
         rooms: [
-          { model: 'SCANDI SINGLE', image: '/images/norway.png' },
-          { model: 'BRIGHT DOUBLE', image: '/images/norway.png' },
+          { name: 'Room N2A', image: '/images/norway/2nd floor/N2 - Room/N2A - Single Window.png' },
+          { name: 'Room N2B', image: '/images/norway/2nd floor/N2 - Room/N2B - Double Window.png' },
+          { name: 'Room N2C', image: '/images/norway/2nd floor/N2 - Room/N2C - Single Window.png' },
+          { name: 'Room N2D', image: '/images/norway/2nd floor/N2 - Room/N2D - Single Skylight.png' },
+          { name: 'Room N2E', image: '/images/norway/2nd floor/N2 - Room/N2E - Single Window.png' },
+          { name: 'Room N2F', image: '/images/norway/2nd floor/N2 - Room/N2F - Single Skylight.png' },
+          { name: 'Room N2G', image: '/images/norway/2nd floor/N2 - Room/N2G - Single Window.png' },
+          { name: 'Room N2H', image: '/images/norway/2nd floor/N2 - Room/N2H - Single Window.png' },
+          { name: 'Room N2I', image: '/images/norway/2nd floor/N2 - Room/N2I - Double Window.png' },
         ],
       },
       {
-        label: 'SECOND FLOOR',
-        commonAreas: commonFirstFloorAreas('/images/norway.png'),
-        rooms: [{ model: 'GARDEN FACING', image: '/images/norway.png' }],
+        label: 'Third Floor',
+        commonAreas: [
+          { name: 'Dining', image: '/images/norway/3rd Floor/N3 - Common Space/N3 - Dining Area.png' },
+          { name: 'Kitchen', image: '/images/norway/3rd Floor/N3 - Common Space/N3 - Kitchen.png' },
+          { name: 'Bathroom', image: '/images/norway/3rd Floor/N3 - Common Space/N3 - Bathroom.png' },
+          { name: 'Corridor', image: '/images/norway/3rd Floor/N3 - Common Space/N3 - Corridor.png' },
+          { name: 'Entrance', image: '/images/norway/3rd Floor/N3 - Common Space/N3 - Entrance.png' }, // 👈 想要多加的 shared space 示范
+        ],
+        rooms: [
+          { name: 'Room N3A', image: '/images/norway/3rd floor/N3 - Room/N3A - Single Window.png' },
+          { name: 'Room N3B', image: '/images/norway/3rd floor/N3 - Room/N3B - Double Window.png' },
+          { name: 'Room N3C', image: '/images/norway/3rd floor/N3 - Room/N3C - Single Window.png' },
+          { name: 'Room N3D', image: '/images/norway/3rd floor/N3 - Room/N3D - Single Skylight.png' },
+          { name: 'Room N3E', image: '/images/norway/3rd floor/N3 - Room/N3E - Single Window.png' },
+          { name: 'Room N3F', image: '/images/norway/3rd floor/N3 - Room/N3F - Single Skylight.png' },
+          { name: 'Room N3G', image: '/images/norway/3rd floor/N3 - Room/N3G - Single Window.png' },
+          { name: 'Room N3H', image: '/images/norway/3rd floor/N3 - Room/N3H - Single Window.png' },
+          { name: 'Room N3I', image: '/images/norway/3rd floor/N3 - Room/N3I - Double Window.png' },
+        ],
       },
     ],
-    mapImage: '/images/norway.png',
-    mapCaption: 'Sibu Jaya — calm Scandinavian-inspired living environment.',
+    mapImage: '/images/parkway.png',
+    mapCaption: 'Sibu Town Centre — steps from the park and daily conveniences.',
+    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3986.36835263636!2d111.8268685!3d2.2934177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31fa4dc467000001%3A0x6b7fa43666b6e410!2sSibu%20Town%20Square!5e0!3m2!1szh-CN!2smy!4v1710000000000!3m2!1szh-CN!2smy',
+    googleMapsUrl: 'https://maps.app.goo.gl/BBNP6vGZf1v66MBy9',
+    virtualTourUrl: ''
   },
+  
   steinway: {
-    audienceTags: ['WORKING ADULT', 'POSTGRADUATE'],
-    highlightTags: ['独立卫浴', 'Covered Parking'],
-    priceFrom: 650,
-    heroImages: ['/images/steinway.png', '/images/steinway.png', '/images/steinway.png'],
+    audienceTags: ['UNDERGRADUATE', 'POSTGRADUATE', 'WORKING ADULT'],
+    highlightTags: ['Fully Furnished'],
+    heroImages: ['/images/steinway/2nd floor/S2 - Room/S2B - Double Window (Female).png'],
+
     amenityGrid: {
-      amenities: ['Smart Lock', 'Premium Wi-Fi'],
-      property: ['Brass-Accented Lobby', 'Laundry Room'],
-      security: ['Smart CCTV', 'Biometric Entry'],
-      management: ['Boutique Property Team'],
-      cleaning: ['Weekly Housekeeping'],
-      parking: ['Covered Parking'],
+      propertyType: ['Shoplot - Fully furnished hostel-style accommodation'],
+      propertyLayout: ['First floor (Male) - 8 rooms', 'Second floor (Female) - 9 rooms'],
+      
+      roomType: [
+        '12 Single Window',
+        '4 Single Skylight ',
+        '1 Double Window ',
+      ],
+      
+      occupancyType: ['Male-only / Female-only floors'],
+      bathroomFacilities: ['2 Shared Toilets per Floor'],
+      
+      sharedAmenities: [
+        'Fridge', 
+        'Washing Machine', 
+        'Microwave', 
+        'Induction Cooker',
+        'Shower Heater'
+      ],
+      
+      deposit: ['Two months'],
+      utilities: ['Wi-Fi & Water Included', 'Room Electricity Paid by Tenant'],
     },
     floors: [
       {
         label: 'FIRST FLOOR',
-        commonAreas: commonFirstFloorAreas('/images/steinway.png'),
+        commonAreas: [
+          { name: 'Dining', image: '/images/steinway/1st Floor/S1 - Common Space/S1 - Dining Area.png' },
+          { name: 'Kitchen', image: '/images/steinway/1st floor/S1 - Common Space/S1 - Kitchen.png' },
+          { name: 'Bathroom', image: '/images/steinway/1st floor/S1 - Common Space/S1 - Bathroom.png' },
+          { name: 'Corridor', image: '/images/steinway/1st floor/S1 - Common Space/S1 - Corridor.png' },
+          { name: 'Dry-Yard', image: '/images/steinway/1st floor/S1 - Common Space/S1 - Dry-Yard.png' }, // 👈 想要多加的 shared space 示范
+        ],
         rooms: [
-          { model: 'HOTEL GRADE SINGLE', image: '/images/steinway.png' },
-          { model: 'MOODY SUITE', image: '/images/steinway.png' },
+          { name: 'Room S1A', image: '/images/steinway/1st floor/S1 - Room/S1A - Single Window (Male).png' },
+          { name: 'Room S1B', image: '/images/steinway/1st floor/S1 - Room/S1B - Single Window (Male).png' },
+          { name: 'Room S1C', image: '/images/steinway/1st floor/S1 - Room/S1C - Single Skylight (Male).png' },
+          { name: 'Room S1D', image: '/images/steinway/1st floor/S1 - Room/S1D - Single Window (Male).png' },
+          { name: 'Room S1E', image: '/images/steinway/1st floor/S1 - Room/S1E - Single Skylight (Male).png' },
+          { name: 'Room S1F', image: '/images/steinway/1st floor/S1 - Room/S1F - Single Window (Male).png' },
+          { name: 'Room S1G', image: '/images/steinway/1st floor/S1 - Room/S1G - Single Window (Male).png' },
+          { name: 'Room S1H', image: '/images/steinway/1st floor/S1 - Room/S1H - Single Window (Male).png' },
+          { name: 'Room S1I', image: '/images/steinway/1st floor/S1 - Room/S1I - Single Window (Male).png' },
         ],
       },
       {
         label: 'SECOND FLOOR',
-        commonAreas: commonFirstFloorAreas('/images/steinway.png'),
-        rooms: [{ model: 'SIGNATURE CORNER', image: '/images/steinway.png' }],
+        commonAreas: [
+          { name: 'Dining', image: '/images/steinway/2nd floor/S2 - Common Space/S2 - Dining Area.png' },
+          { name: 'Kitchen', image: '/images/steinway/2nd floor/S2 - Common Space/S2 - Kitchen.png' },
+          { name: 'Bathroom', image: '/images/steinway/2nd floor/S2 - Common Space/S2 - Bathroom.png' },
+          { name: 'Corridor', image: '/images/steinway/2nd floor/S2 - Common Space/S2 - Corridor.png' },
+          { name: 'Dry-Yard', image: '/images/steinway/2nd floor/S2 - Common Space/S2 - Dry-Yard.png' }, 
+        ],
+        rooms: [
+          { name: 'Room S2A', image: '/images/steinway/2nd floor/S2 - Room/S2A - Single Window (Female).png' },
+          { name: 'Room S2B', image: '/images/steinway/2nd floor/S2 - Room/S2B - Double Window (Female).png' },
+          { name: 'Room S2C', image: '/images/steinway/2nd floor/S2 - Room/S2C - Single Skylight (Female).png' },
+          { name: 'Room S2D', image: '/images/steinway/2nd floor/S2 - Room/S2D - Single Window (Female).png' },
+          { name: 'Room S2E', image: '/images/steinway/2nd floor/S2 - Room/S2E - Single Skylight (Female).png' },
+          { name: 'Room S2F', image: '/images/steinway/2nd floor/S2 - Room/S2F - Single Window (Female).png' },
+          { name: 'Room S2G', image: '/images/steinway/2nd floor/S2 - Room/S2G - Single Window (Female).png' },
+          { name: 'Room S2H', image: '/images/steinway/2nd floor/S2 - Room/S2H - Single Window (Female).png' },
+        ],
       },
     ],
-    mapImage: '/images/steinway.png',
-    mapCaption: 'Lanang Road — hotel-grade interiors with refined brass accents.',
+    mapImage: '/images/parkway.png',
+    mapCaption: 'Sibu Town Centre — steps from the park and daily conveniences.',
+    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3986.36835263636!2d111.8268685!3d2.2934177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31fa4dc467000001%3A0x6b7fa43666b6e410!2sSibu%20Town%20Square!5e0!3m2!1szh-CN!2smy!4v1710000000000!3m2!1szh-CN!2smy',
+    googleMapsUrl: 'https://maps.app.goo.gl/BBNP6vGZf1v66MBy9',
+    virtualTourUrl: ''
   },
+  
   velway: {
-    audienceTags: ['UNDERGRADUATE', 'WORKING ADULT'],
-    highlightTags: ['全家私', '独立卫浴'],
-    priceFrom: 480,
-    heroImages: ['/images/velway.png', '/images/velway.png'],
+    audienceTags: ['UNDERGRADUATE', 'POSTGRADUATE', 'WORKING ADULT'],
+    highlightTags: ['Fully Furnished'],
+    heroImages: ['/images/velway/2nd floor/V2 - Room/V2K - Single Window (Female).png'],
+
     amenityGrid: {
-      amenities: ['Smart Lock', 'High-Speed Wi-Fi'],
-      property: ['Garden Terrace', 'Laundry Room'],
-      security: ['CCTV', 'Secure Gate'],
-      management: ['Residence Care Team'],
-      cleaning: ['Weekly Common Cleaning'],
-      parking: ['Open Parking'],
+      propertyType: ['Shoplot - Fully furnished hostel-style accommodation'],
+      propertyLayout: ['First floor (Male) - 10 rooms', 'Second floor (Female) - 11 rooms'],
+      
+      roomType: [
+        '12 Single Window',
+        '5 Single Skylight ',
+        '4 Double Window ',
+      ],
+      
+      occupancyType: ['Male-only / Female-only floors'],
+      bathroomFacilities: ['2 Shared Toilets per Floor'],
+      
+      sharedAmenities: [
+        'Fridge', 
+        'Washing Machine', 
+        'Dryer', 
+        'Microwave', 
+        'Induction Cooker',
+        'Shower Heater'
+      ],
+      
+      deposit: ['Two months'],
+      utilities: ['Wi-Fi & Water Included', 'Room Electricity Paid by Tenant'],
     },
     floors: [
       {
         label: 'FIRST FLOOR',
-        commonAreas: commonFirstFloorAreas('/images/velway.png'),
+        commonAreas: [
+          { name: 'Dining', image: '/images/velway/1st floor/coming soon.JPG' },
+          { name: 'Kitchen', image: '/images/velway/1st floor/coming soon.JPG' },
+          { name: 'Bathroom', image: '/images/velway/1st floor/coming soon.JPG' },
+          { name: 'Corridor', image: '/images/velway/1st floor/coming soon.JPG' },
+          { name: 'Dry-Yard', image: '/images/velway/1st floor/coming soon.JPG' }, // 👈 想要多加的 shared space 示范
+        ],
         rooms: [
-          { model: 'GREEN VIEW SINGLE', image: '/images/velway.png' },
-          { model: 'SERENE DOUBLE', image: '/images/velway.png' },
+          { name: 'Room V1A', image: '/images/velway/1st floor/coming soon.JPG' },
+          { name: 'Room V1B', image: '/images/velway/1st floor/coming soon.JPG' },
+          { name: 'Room V1C', image: '/images/velway/1st floor/coming soon.JPG' },
+          { name: 'Room V1D', image: '/images/velway/1st floor/coming soon.JPG' },
+          { name: 'Room V1E', image: '/images/velway/1st floor/coming soon.JPG' },
+          { name: 'Room V1F', image: '/images/velway/1st floor/coming soon.JPG' },
+          { name: 'Room V1G', image: '/images/velway/1st floor/coming soon.JPG' },
+          { name: 'Room V1H', image: '/images/velway/1st floor/coming soon.JPG' },
+          { name: 'Room V1I', image: '/images/velway/1st floor/coming soon.JPG' },
+          { name: 'Room V1J', image: '/images/velway/1st floor/coming soon.JPG' },
         ],
       },
       {
         label: 'SECOND FLOOR',
-        commonAreas: commonFirstFloorAreas('/images/velway.png'),
-        rooms: [{ model: 'CANOPY SUITE', image: '/images/velway.png' }],
+        commonAreas: [
+          { name: 'Kitchen', image: '/images/velway/2nd floor/V2 - Common Space/V2 - Kitchen.png' },
+          { name: 'Bathroom', image: '/images/velway/2nd floor/V2 - Common Space/V2 - Bathroom.png' },
+          { name: 'Corridor', image: '/images/velway/2nd floor/V2 - Common Space/V2 - Corridor .png' },
+          { name: 'Entrance', image: '/images/velway/2nd floor/V2 - Common Space/coming soon.JPG' },
+          { name: 'Dry-Yard', image: '/images/velway/2nd floor/V2 - Common Space/V2 - Dry-Yard.png' }, // 👈 想要多加的 shared space 示范
+        ],
+        rooms: [
+          { name: 'Room V2A', image: '/images/velway/2nd floor/V2 - Room/V2A - Double Window (Female).png' },
+          { name: 'Room V2B', image: '/images/velway/2nd floor/V2 - Room/V2B - Double Window (Female).png' },
+          { name: 'Room V2C', image: '/images/velway/2nd floor/V2 - Room/V2C - Single Window (Female).png' },
+          { name: 'Room V2D', image: '/images/velway/2nd floor/V2 - Room/V2D - Single Skylight (Female).png' },
+          { name: 'Room V2E', image: '/images/velway/2nd floor/V2 - Room/V2E - Single Window (Female).png' },
+          { name: 'Room V2F', image: '/images/velway/2nd floor/V2 - Room/V2F - Single Skylight (Female).png' },
+          { name: 'Room V2G', image: '/images/velway/2nd floor/V2 - Room/V2G - Single Window (Female).png' },
+          { name: 'Room V1H', image: '/images/velway/2nd floor/V2 - Room/V2H - Single Window (Female).png' },
+          { name: 'Room V1I', image: '/images/velway/2nd floor/V2 - Room/V2I - Single Skylight (Female).png' },
+          { name: 'Room V1J', image: '/images/velway/2nd floor/V2 - Room/V2J - Single Window (Female).png' },
+          { name: 'Room V1K', image: '/images/velway/2nd floor/V2 - Room/V2K - Single Window (Female).png' },
+        ],
       },
     ],
-    mapImage: '/images/velway.png',
-    mapCaption: 'Upper Lanang — serene rooms surrounded by lush greenery.',
+    mapImage: '/images/parkway.png',
+    mapCaption: 'Sibu Town Centre — steps from the park and daily conveniences.',
+    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3986.36835263636!2d111.8268685!3d2.2934177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31fa4dc467000001%3A0x6b7fa43666b6e410!2sSibu%20Town%20Square!5e0!3m2!1szh-CN!2smy!4v1710000000000!3m2!1szh-CN!2smy',
+    googleMapsUrl: 'https://maps.app.goo.gl/BBNP6vGZf1v66MBy9',
+    virtualTourUrl: ''
   },
+  
   'opening-soon': {
     audienceTags: ['COMING SOON'],
     highlightTags: [],
-    priceFrom: null,
     heroImages: ['/images/lifestyle-1.png'],
     amenityGrid: {
-      amenities: ['To Be Announced'],
-      property: ['To Be Announced'],
-      security: ['To Be Announced'],
-      management: ['To Be Announced'],
-      cleaning: ['To Be Announced'],
-      parking: ['To Be Announced'],
+      propertyType: ['To Be Announced'],
+      propertyLayout: ['To Be Announced'],
+      roomType: ['To Be Announced'],
+      occupancyType: ['To Be Announced'],
+      bathroomFacilities: ['To Be Announced'],
+      sharedAmenities: ['To Be Announced'],
+      deposit: ['To Be Announced'],
+      utilities: ['To Be Announced'],
     },
     floors: [],
     mapImage: '/images/lifestyle-1.png',
@@ -227,15 +461,16 @@ export function getResidenceDetail(id: string): ResidenceDetail {
     residenceDetails[id] ?? {
       audienceTags: ['WORKING ADULT'],
       highlightTags: ['全家私'],
-      priceFrom: null,
       heroImages: ['/placeholder.svg'],
       amenityGrid: {
-        amenities: ['Smart Lock', 'Wi-Fi'],
-        property: ['Common Areas'],
-        security: ['CCTV'],
-        management: ['On-Site Team'],
-        cleaning: ['Scheduled Cleaning'],
-        parking: ['Available'],
+        propertyType: ['Co-Living Studio'],
+        propertyLayout: ['Modern Layout'],
+        roomType: ['Standard Single'],
+        occupancyType: ['All Welcomed'],
+        bathroomFacilities: ['Water Heater Equipped'],
+        sharedAmenities: ['Basic Shared Kitchen & Wi-Fi'],
+        deposit: ['Contact for Details'],
+        utilities: ['Billed via Submeter'],
       },
       floors: [],
       mapImage: '/placeholder.svg',

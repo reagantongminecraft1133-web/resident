@@ -17,16 +17,14 @@ export function About() {
           </h2>
           <div className="mt-6 space-y-4 text-pretty leading-relaxed" style={{ color: '#1A1A1AA6' }}>
             <p>
-              The Room Residence began with a simple belief: renting a room in
-              Sibu shouldn&apos;t mean compromising on comfort or design. What
-              started as a single furnished space has grown into a curated
-              collection of premium residences.
+              What began as 3 rooms in 2021 has grown into over 100 fully furnished residences across Sibu. 
+              We started The Room Residence to give students and young professionals a better way to live.
             </p>
             <p>
-              Every room is designed, furnished and maintained to a hotel-grade
-              standard — so you can simply arrive with your suitcase and feel at
-              home from day one. Our mission is to make elevated living
-              accessible, transparent and effortless.
+              Our mission is simple: "Transforming Rooms into Residences."
+            </p>
+            <p>
+              That means clean, comfortable, well-managed spaces where you feel safe, settled, and at home - from day one.
             </p>
           </div>
 
@@ -47,28 +45,15 @@ export function About() {
         <div className="grid grid-cols-2 gap-4">
             <div className="overflow-hidden rounded-2xl border border-zinc-200">
               <img
-                src="/images/lifestyle-1.png"
+                src="/images/TRR Poster xxx.png"
                 alt="Cozy furnished living corner with armchair"
                 className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
               />
             </div>
-            <div className="mt-10 overflow-hidden rounded-2xl border border-zinc-200">
-              <img
-                src="/images/norway.png"
-                alt="Bright Scandinavian bedroom"
-                className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
-              />
-            </div>
-            <div className="overflow-hidden rounded-2xl border border-zinc-200">
-              <img
-                src="/images/lifestyle-3.png"
-                alt="Elegant marble and brass bathroom"
-                className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
-              />
-            </div>
+
             <div className="-mt-10 overflow-hidden rounded-2xl border border-zinc-200">
               <img
-                src="/images/lifestyle-2.png"
+                src="/images/TRR Poster.png"
                 alt="Modern kitchen and dining detail"
                 className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
               />

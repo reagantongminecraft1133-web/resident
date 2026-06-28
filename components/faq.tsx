@@ -7,49 +7,64 @@ import { cn } from '@/lib/utils'
 const faqs = [
   {
     q: 'How do I book a room?',
-    a: 'Message us on WhatsApp or tap “Contact Us”. We’ll share current availability, arrange a viewing (in person or virtual), and once you’re happy we secure your room with a deposit. The whole process can be completed in a single day.',
+    a: 'You can book a room by contacting us directly or through our trusted agents. To confirm your booking, a deposit and 1 month advance rental is required. \n\nOnce payment is received, we’ll prepare your tenancy agreement and schedule your move-in date.',
   },
   {
     q: 'What are the deposit and rental fees?',
-    a: 'Rentals vary by residence and room type. Typically we ask for one month’s rent as a refundable security deposit plus the first month’s rent upfront. There are no hidden agent fees — everything is shared transparently before you commit.',
+    a: 'Deposit is typically 1.5 or 2 months, depending on the residence. \n\n Rental fees vary based on room size, type, and amenities provided. Please refer to the residence details or check with our agents for the latest rates.',
   },
   {
-    q: 'Are the rooms really fully furnished?',
-    a: 'Yes. Every room comes with a bed and quality mattress, wardrobe, desk, lighting, curtains and linens. Shared spaces include a fitted kitchen and lounge. You only need to bring your personal belongings.',
+    q: 'What’s the minimum stay?',
+    a: 'Our standard tenancy period is 12 months. We may consider shorter stays on a case-by-case basis if you have a valid reason. Approval is subject to room availability and management discretion.',
   },
   {
-    q: 'What is included in the monthly rent?',
-    a: 'Rent includes Wi-Fi, water, and the use of all shared facilities. Electricity is typically billed based on usage. Weekly cleaning of common areas is included at most residences.',
+    q: 'Can I view the room before booking?',
+    a: 'Yes, you’re welcome to view the room if it’s vacant at the time of your visit. If the room is currently occupied, we’ll provide you with photos and videos instead. Just contact us or our agents to arrange a viewing or request media — we’re happy to help.',
   },
   {
-    q: 'What is the minimum rental period?',
-    a: 'Our standard tenancy is a minimum of three months, with flexible monthly renewals after that. Short-stay options may be available at select residences — just ask.',
+    q: 'Can I move in anytime?',
+    a: 'You can move in any day if the room is vacant. All contracts officially start on the 1st of each month. \n\n• Move in 1st–15th: Pay full month. Contract starts this month. \n\n• Move in after 15th: Pay half month + contract starts next month, OR pay full month to start immediately.',
   },
   {
-    q: 'Where are the residences located?',
-    a: 'All five residences — Parkway, Kingsway, Norway, Steinway and Velway — are located in and around Sibu, close to town, dining and key amenities. We’ll help you choose the best fit for your routine.',
+    q: 'Is Wi-Fi provided?',
+    a: 'Yes. We provide free Wi-Fi for all tenants, and the cost is covered by us.',
   },
+  {
+    q: 'Does the room have aircon and fan?',
+    a: 'All our rooms come with an air conditioner and do not include ceiling fan. For details on aircon electricity billing, please refer to "How is room electricity calculated?" in the FAQs',
+  },
+  {
+    q: 'How is room electricity calculated?',
+    a: 'Every room comes with an individual sub-meter. You only pay for your room’s usage based on SESCO rates. Common area electricity is on us.',
+  },
+  {
+    q: 'What happens if I want to terminate early?',
+    a: 'We follow the tenancy agreement strictly. The deposit will not be refunded for early termination. \n\nYou may request to find a replacement tenant for the exact duration of your contract. Approval is subject to management’s final decision, and the new tenant must move in immediately with no gap.',
+  },
+  
 ]
 
 export function Faq() {
   const [open, setOpen] = useState<number | null>(0)
 
   return (
-    <section id="faqs" className="py-20 md:py-28" style={{ backgroundColor: '#F9F9F7' }}>
+    // 🌟 优化 1：大底色无缝换成浅暖灰（#F3F3F0），并加上微弱的上下边框线条，完美划分段落节奏
+    <section id="faqs" className="py-20 md:py-28 border-t border-b border-zinc-200/40" style={{ backgroundColor: '#F3F3F0' }}>
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-5 md:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
         <div className="lg:sticky lg:top-28 lg:self-start">
-          <span className="text-[11px] font-medium uppercase tracking-[0.25em]" style={{ color: '#1A1A1A66' }}>
+          {/* 🌟 优化 2：标签颜色换成香槟金（#C5A880），与上方的评价板块达到像素级的视觉统一 */}
+          <span className="text-[11px] font-bold uppercase tracking-[0.25em]" style={{ color: '#C5A880' }}>
             Good to know
           </span>
           <h2 className="mt-3 text-balance text-3xl font-semibold tracking-tight md:text-4xl" style={{ color: '#1A1A1A' }}>
             Frequently asked questions
           </h2>
-          <p className="mt-4 text-pretty leading-relaxed" style={{ color: '#1A1A1AA6' }}>
+          <p className="mt-4 text-pretty leading-relaxed text-sm md:text-base" style={{ color: '#1A1A1AA6' }}>
             Everything you need to know about renting with The Room Residence.
             Still have a question?{' '}
             <a
               href="#contact"
-              className="font-medium underline decoration-black/15 underline-offset-4 hover:decoration-black/30"
+              className="font-medium underline decoration-black/15 underline-offset-4 hover:decoration-black/30 transition-colors"
               style={{ color: '#1A1A1A' }}
             >
               Talk to our team
@@ -64,26 +79,27 @@ export function Faq() {
             return (
               <div
                 key={item.q}
+                // 🌟 优化 3：微调了边框色与阴影。纯白的卡片在 #F3F3F0 的衬托下，层级感极度舒适
                 className={cn(
-                  'overflow-hidden rounded-2xl border border-zinc-200 bg-white transition-colors shadow-[0_8px_30px_rgb(0,0,0,0.015)]',
-                  isOpen && 'bg-white',
+                  'overflow-hidden rounded-2xl border border-zinc-200/80 bg-white transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.015)]',
+                  isOpen && 'shadow-[0_12px_30px_rgba(0,0,0,0.02)] border-zinc-300/80',
                 )}
               >
                 <button
                   type="button"
                   onClick={() => setOpen(isOpen ? null : i)}
                   aria-expanded={isOpen}
-                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-zinc-50/50"
                 >
-                  <span className="text-base font-medium" style={{ color: '#1A1A1A' }}>
+                  <span className="text-base font-semibold tracking-tight" style={{ color: '#1A1A1A' }}>
                     {item.q}
                   </span>
                   <Plus
                     className={cn(
                       'size-5 shrink-0 transition-transform duration-300',
-                      isOpen && 'rotate-45',
+                      isOpen && 'rotate-45 text-[#C5A880]', // 展开时加号旋转，顺便变成淡金色提示
                     )}
-                    style={{ color: '#1A1A1A50' }}
+                    style={{ color: isOpen ? '#C5A880' : '#1A1A1A50' }}
                   />
                 </button>
                 <div
@@ -95,8 +111,14 @@ export function Faq() {
                   )}
                 >
                   <div className="overflow-hidden">
-                    <p className="px-6 pb-6 text-sm leading-relaxed" style={{ color: '#1A1A1AA6' }}>
-                      {item.a}
+                    {/* 🌟 核心修改点：把原本的 {item.a} 替换为以下纯手工动态换行渲染机制 */}
+                    <p className="px-6 pb-6 text-sm leading-relaxed text-zinc-600">
+                      {item.a.split('\n').map((line, index) => (
+                        <span key={index}>
+                          {line}
+                          {index < item.a.split('\n').length - 1 && <br />}
+                        </span>
+                      ))}
                     </p>
                   </div>
                 </div>

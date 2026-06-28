@@ -15,7 +15,7 @@ export function Logo({
     >
       <span
         className={cn(
-          'flex size-9 items-center justify-center rounded-md border transition-colors',
+          'flex size-9 items-center justify-center rounded-md border border-white/20 bg-white/5 text-white transition-colors group-hover:bg-[#C5A880] group-hover:text-black group-hover:border-[#C5A880]',
           inverted
             ? 'border-white/20 bg-white/10 text-white group-hover:bg-white group-hover:text-foreground'
             : 'border-black/10 bg-oat bg-transparent text-white border-white/100 group-hover:border-black/20',
