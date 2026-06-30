@@ -1,9 +1,9 @@
-export const WHATSAPP_NUMBER = '60000000000'
+export const WHATSAPP_NUMBER = '60103268811'
 
 export function buildWhatsAppInquiryUrl(residenceName: string) {
   const label = `${residenceName.toUpperCase()} RESIDENCE`
   const text = encodeURIComponent(
-    `你好，我在网站上看到了【${label}】的房间，想咨询一下近期的空房和租金情况！`,
+    `Hi! I came across the *${label}* room on your website and would like to ask if it's currently available. Could you also let me know the latest rental rate? Thank you!`,
   )
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`
 }

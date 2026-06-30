@@ -36,8 +36,6 @@ export type ResidenceDetail = {
   mapCaption: string
 
   mapImageMobile?: string
-  
-  mapEmbedUrl?: string   // Google Map 嵌入式 Iframe 链接
   googleMapsUrl?: string // 真实 Google Map 外跳链接
   virtualTourUrl?: string // 360 全景嵌入链接（如 Kuula 或 Pannellum）
 }
@@ -112,11 +110,10 @@ export const residenceDetails: Record<string, ResidenceDetail> = {
         ],
       },
     ],
-    mapImage: '/images/Parkway.JPG',
-    mapImageMobile: '/images/parkway-mobile.jpg',
+    mapImage: '/images/map/parkwaymap.png',
+    mapImageMobile: '/images/map/mobile/parkwaymap.png',
     mapCaption: 'Jalan Wawasan — with cafés, restaurants, and daily essentials just moments away.',
-    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d498.31022909945233!2d111.8354458850863!3d2.343344251943304!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2smy!4v1782645486890!5m2!1sen!2smy',
-    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=2.343483,%20111.835348',
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=2.343477,%20111.835596',
     virtualTourUrl: ''
   },
   
@@ -190,11 +187,10 @@ export const residenceDetails: Record<string, ResidenceDetail> = {
         ],
       },
     ],
-    mapImage: '/images/Parkway Residence - Map.png',
-    mapImageMobile: '/images/Parkway Mobile.jpg',
+    mapImage: '/images/map/kingswaymap.png',
+    mapImageMobile: '/images/map/mobile/kingswaymap.png',
     mapCaption: 'Jalan Wawasan — with cafés, restaurants, and daily essentials just moments away.',
-    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3986.36835263636!2d111.8268685!3d2.2934177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31fa4dc467000001%3A0x6b7fa43666b6e410!2sSibu%20Town%20Square!5e0!3m2!1szh-CN!2smy!4v1710000000000!3m2!1szh-CN!2smy',
-    googleMapsUrl: 'https://maps.app.goo.gl/BBNP6vGZf1v66MBy9',
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=2.343695,%20111.835609',
     virtualTourUrl: ''
   },
   
@@ -271,10 +267,10 @@ export const residenceDetails: Record<string, ResidenceDetail> = {
         ],
       },
     ],
-    mapImage: '/images/parkway.png',
+    mapImage: '/images/map/norwaymap.png',
+    mapImageMobile: '/images/map/mobile/norwaymap.png',
     mapCaption: 'Unicity — ideal for students, with easy access to campus and everyday conveniences.',
-    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3986.36835263636!2d111.8268685!3d2.2934177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31fa4dc467000001%3A0x6b7fa43666b6e410!2sSibu%20Town%20Square!5e0!3m2!1szh-CN!2smy!4v1710000000000!3m2!1szh-CN!2smy',
-    googleMapsUrl: 'https://maps.app.goo.gl/BBNP6vGZf1v66MBy9',
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=2.342797,%20111.831039',
     virtualTourUrl: ''
   },
   
@@ -350,10 +346,10 @@ export const residenceDetails: Record<string, ResidenceDetail> = {
         ],
       },
     ],
-    mapImage: '/images/parkway.png',
+    mapImage: '/images/map/steinwaymap.png',
+    mapImageMobile: '/images/map/mobile/steinwaymap.png',
     mapCaption: 'Jalan Wawasan — with cafés, restaurants, and daily essentials just moments away.',
-    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3986.36835263636!2d111.8268685!3d2.2934177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31fa4dc467000001%3A0x6b7fa43666b6e410!2sSibu%20Town%20Square!5e0!3m2!1szh-CN!2smy!4v1710000000000!3m2!1szh-CN!2smy',
-    googleMapsUrl: 'https://maps.app.goo.gl/BBNP6vGZf1v66MBy9',
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=2.343988,%20111.835600',
     virtualTourUrl: ''
   },
   
@@ -434,10 +430,10 @@ export const residenceDetails: Record<string, ResidenceDetail> = {
         ],
       },
     ],
-    mapImage: '/images/velway.png',
+    mapImage: '/images/map/velwaymap.png',
+    mapImageMobile: '/images/map/mobile/velwaymap.png',
     mapCaption: 'Unicity — ideal for students, with easy access to campus and everyday conveniences.',
-    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3986.36835263636!2d111.8268685!3d2.2934177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31fa4dc467000001%3A0x6b7fa43666b6e410!2sSibu%20Town%20Square!5e0!3m2!1szh-CN!2smy!4v1710000000000!3m2!1szh-CN!2smy',
-    googleMapsUrl: 'https://maps.app.goo.gl/BBNP6vGZf1v66MBy9',
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=2.342737,%20111.832199',
     virtualTourUrl: ''
   },
   

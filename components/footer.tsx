@@ -8,7 +8,7 @@ const INK = '#1A1A1A'
 const CHAMPAGNE = '#C5A880'
 
 // 🌟 🔗 核心配置区：在这里直接换成表哥对应的真实私域网址和社交媒体主页链接
-const WHATSAPP_URL = 'https://wa.me/60000000000' 
+const WHATSAPP_URL = 'https://wa.me/60103268811' 
 const FACEBOOK_URL = 'https://www.facebook.com/sibu.theroomresidence/' // 👈 粘贴真正的 Facebook 主页链接
 
 function FacebookIcon({ className }: { className?: string }) {
@@ -103,7 +103,7 @@ export function Footer() {
               Chat on WhatsApp
             </a>
             <a
-              href="tel:+60000000000"
+              href="tel:+60103268811"
               className="inline-flex items-center justify-center gap-2 rounded-full border border-zinc-200 px-6 py-3 text-sm font-semibold transition-colors hover:bg-[#F3F4F6] active:scale-95"
               style={{ color: INK }}
             >

@@ -364,13 +364,13 @@ export function ResidenceDetailPanel({
                 {/* 💻 电脑端专属：鼠标悬浮时浮现的微黑高光蒙层提示 */}
                 <div className="absolute inset-0 bg-black/0 group-hover/map:bg-black/[0.04] transition-colors duration-300 hidden md:flex items-center justify-center z-20">
                   <span className="opacity-0 group-hover/map:opacity-100 transition-all duration-300 translate-y-1 group-hover/map:translate-y-0 bg-white/90 backdrop-blur-md text-[11px] font-bold px-3 py-1.5 rounded-full text-zinc-800 shadow-md border border-zinc-200/50 uppercase tracking-wider">
-                    点击打开导航地图 ↗
+                    Click to Open in Google Maps ↗
                   </span>
                 </div>
 
                 {/* 📱 手机端专属：常驻在右下角的高奢香槟金“点击导航”小胶囊（完美解决手机无 hover 问题） */}
                 <div className="absolute bottom-3 right-3 z-30 block md:hidden bg-[#C5A880] text-[#1A1A1A] font-sans text-[9px] font-black uppercase tracking-widest px-2.5 py-1.5 rounded-full shadow-md active:scale-95 transition-transform">
-                  点击查看路线 ↗
+                  Click to Open in Google Maps ↗
                 </div>
               </a>
             ) : (

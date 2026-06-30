@@ -8,6 +8,8 @@ export function About() {
   return (
     <section id="about" className="py-20 md:py-28" style={{ backgroundColor: '#F9F9F7' }}>
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-5 md:px-8 lg:grid-cols-2 lg:gap-16">
+        
+        {/* 左侧文字与数据舱 */}
         <div className="flex flex-col justify-center">
           <span className="text-[11px] font-medium uppercase tracking-[0.25em]" style={{ color: '#1A1A1A66' }}>
             About Us
@@ -42,23 +44,25 @@ export function About() {
           </dl>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-            <div className="overflow-hidden rounded-2xl border border-zinc-200">
-              <img
-                src="/images/TRR Poster xxx.png"
-                alt="Cozy furnished living corner with armchair"
-                className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
-              />
-            </div>
+        {/* 📱 右侧图片舱：极致绝对对称 + 黄金错落舱 */}
+        {/* 🌟 核心魔法：用 justify-center 让整组海报在手机端绝对居中！md:justify-start 适配电脑端端正布局 */}
+        <div className="flex justify-center md:justify-start items-start gap-4 pt-4 pb-24 w-full">
+          
+          {/* 海报 1：手机端宽度用 w-[45%] 腾出两侧完美对称的留白，大屏 md:w-1/2 */}
+          <img
+            src="/images/TRR Poster xxx.png"
+            alt="Cozy furnished living corner with armchair"
+            className="w-[45%] md:w-1/2 h-auto rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.03)] transition-transform duration-500 hover:md:-translate-y-1 block select-none pointer-events-none"
+          />
 
-            <div className="-mt-10 overflow-hidden rounded-2xl border border-zinc-200">
-              <img
-                src="/images/TRR Poster.png"
-                alt="Modern kitchen and dining detail"
-                className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
-              />
-            </div>
-          </div>
+          {/* 海报 2：手机端完美保留 mt-12 错落，利用绝对居中消灭歪斜感 */}
+          <img
+            src="/images/TRR Poster.png"
+            alt="About Us Poster 2"
+            className="w-[45%] md:w-1/2 h-auto rounded-3xl mt-12 shadow-[0_8px_30px_rgba(0,0,0,0.03)] transition-transform duration-500 hover:md:translate-y-1 block select-none pointer-events-none"
+          />
+          
+        </div>
       </div>
     </section>
   )
