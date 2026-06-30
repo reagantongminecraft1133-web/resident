@@ -1,380 +1,174 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
-import { ArrowLeft, MapPin, MessageCircle, Layers, ImageIcon, X, Maximize2, Compass, Navigation } from 'lucide-react'
-import { buildWhatsAppInquiryUrl } from '@/lib/constants'
-import { getResidenceDetail } from '@/lib/residence-details'
-import type { Residence } from '@/lib/residences'
-import { cn } from '@/lib/utils'
+import { useCallback, useEffect, useState } from 'react'
+import { Check, MapPin } from 'lucide-react'
+import { ResidenceDetailPanel } from '@/components/residence-detail-panel'
+import { residences, type Residence } from '@/lib/residences'
+import { cn } from '@/lib/utils' // 👈 确保引入了 cn 工具函数，用于动态拼装 Tailwind 类名
 
-const WARM_CREAM = '#F9F9F7'
-const INK = '#1A1A1A'
-const CHAMPAGNE = '#C5A880'
-
-type AmenityKey =
-  | 'propertyType'
-  | 'propertyLayout'
-  | 'roomType'
-  | 'occupancyType'
-  | 'bathroomFacilities'
-  | 'sharedAmenities'
-  | 'deposit'
-  | 'utilities'
-
-const AMENITY_LABELS: Record<AmenityKey, string> = {
-  propertyType: 'PROPERTY TYPE',
-  propertyLayout: 'PROPERTY LAYOUT',
-  roomType: 'ROOM TYPE',
-  occupancyType: 'OCCUPANCY TYPE',
-  bathroomFacilities: 'BATHROOM FACILITIES',
-  sharedAmenities: 'SHARED AMENITIES',
-  deposit: 'DEPOSIT',
-  utilities: 'UTILITIES',
-}
-
-type Props = {
-  residence: Residence
-  onClose: () => void
-  isClosing?: boolean
-}
-
-export function ResidenceDetailPanel({
-  residence,
-  onClose,
-  isClosing = false,
-}: Props) {
-  const [visible, setVisible] = useState(false)
-  const detail = getResidenceDetail(residence.id)
-  const title = `${residence.name.toUpperCase()} RESIDENCE`
-  const whatsAppUrl = buildWhatsAppInquiryUrl(residence.name)
-  
-  const [activeImage, setActiveImage] = useState<string>(
-    detail.heroImages?.[0] || residence.image || '/placeholder.svg'
+export function Residences() {
+  const [activeResidence, setActiveResidence] = useState<Residence | null>(
+    null,
   )
-  const [activeItemLabel, setActiveItemLabel] = useState<string>('Overview')
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false)
+  const [closing, setClosing] = useState(false)
 
-  const allResidenceImages = useMemo(() => {
-    const imgs: string[] = []
-    if (detail.heroImages) imgs.push(...detail.heroImages)
-    if (residence.image) imgs.push(residence.image)
-    if (detail.mapImage) imgs.push(detail.mapImage)
-    detail.floors.forEach((floor) => {
-      floor.commonAreas?.forEach((area) => { if (area.image) imgs.push(area.image) })
-      floor.rooms?.forEach((room) => { if (room.image) imgs.push(room.image) })
-    })
-    return Array.from(new Set(imgs.filter(Boolean)))
-  }, [detail, residence])
+  const handleOpen = useCallback((residence: Residence) => {
+    setClosing(false)
+    setActiveResidence(residence)
+  }, [])
 
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => setVisible(true))
-    return () => cancelAnimationFrame(frame)
+  const handleClose = useCallback(() => {
+    setClosing(true)
+    window.setTimeout(() => {
+      setActiveResidence(null)
+      setClosing(false)
+    }, 400)
   }, [])
 
   useEffect(() => {
-    if (isClosing) setVisible(false)
-  }, [isClosing])
-
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        if (isLightboxOpen) setIsLightboxOpen(false)
-        else onClose()
-      }
+    if (activeResidence) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
     }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [onClose, isLightboxOpen])
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [activeResidence])
 
   return (
-    <div
-      className={cn(
-        'fixed inset-0 z-50 flex flex-col md:flex-row transition-opacity duration-500 ease-out md:overflow-hidden',
-        visible ? 'opacity-100' : 'opacity-0',
-      )}
-      style={{ backgroundColor: WARM_CREAM }}
-      role="dialog"
-      aria-modal="true"
-      aria-label={`${title} details`}
-    >
-      {/* 隐形预加载 */}
-      <div className="pointer-events-none fixed invisible size-0 overflow-hidden" aria-hidden="true">
-        {allResidenceImages.map((src) => (
-          <img key={src} src={src} alt="Preload" />
-        ))}
-      </div>
-
-      {/* 返回首页纽扣 */}
-      <button
-        type="button"
-        onClick={onClose}
-        className="fixed left-4 top-4 z-50 inline-flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur-md px-3.5 py-1.5 text-xs font-semibold shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-zinc-200/80 transition-all duration-300 hover:scale-105 active:scale-95 sm:left-6 sm:top-5"
-        style={{ color: INK }}
+    <>
+      <section
+        id="residences"
+        className="py-20 md:py-28"
+        style={{ backgroundColor: '#F9F9F7' }}
       >
-        <ArrowLeft className="size-3.5" />
-        返回首页
-      </button>
-
-      {/* 左侧大舱：大图视窗 */}
-      <div 
-        onClick={() => setIsLightboxOpen(true)}
-        className="group/viewer w-full md:w-[45%] lg:w-[50%] h-[32vh] md:h-full relative bg-zinc-950 shrink-0 overflow-hidden border-b md:border-b-0 md:border-r border-zinc-200/60 cursor-zoom-in"
-      >
-        <img src={activeImage} alt="" className="absolute inset-0 size-full object-cover blur-2xl scale-110 opacity-55 pointer-events-none select-none transition-all duration-500" key={`blur-${activeImage}`} />
-        <img src={activeImage} alt={activeItemLabel} className="relative size-full object-contain z-10 p-3 md:p-6 transition-transform duration-500 group-hover/viewer:scale-[1.01]" key={`fit-${activeImage}`} />
-        <div className="absolute top-4 right-4 z-20 hidden md:inline-flex size-8 items-center justify-center rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white opacity-0 group-hover/viewer:opacity-100 transition-opacity duration-300">
-          <Maximize2 className="size-3.5" />
-        </div>
-        <div className="absolute bottom-3 left-3 z-20 inline-flex items-center gap-1.5 rounded bg-black/50 backdrop-blur-md px-2 py-1 text-[9px] font-bold uppercase tracking-widest text-white/90 border border-white/5">
-          <ImageIcon className="size-3 text-[#C5A880]" />
-          Viewing: {activeItemLabel}
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/15 pointer-events-none z-15" />
-      </div>
-
-      {/* 右侧大舱 */}
-      <div className="flex-1 overflow-y-auto overscroll-contain transition-transform duration-500 ease-out px-4 py-6 md:p-12 pb-36 lg:pb-40">
-        <div className="max-w-2xl mx-auto">
-          {/* 顶层头部 */}
-          <header className="pt-2">
-            <h2 className="text-xl font-bold tracking-tight md:text-3xl font-serif text-[#1A1A1A] uppercase">
-              {title}
+        <div className="mx-auto max-w-7xl px-5 md:px-8">
+          <div className="max-w-xl">
+            <span
+              className="text-[11px] font-medium uppercase tracking-[0.25em]"
+              style={{ color: '#1A1A1A66' }}
+            >
+            </span>
+            <h2
+              className="mt-3 text-balance text-3xl font-semibold tracking-tight md:text-4xl"
+              style={{ color: '#1A1A1A' }}
+            >
+              Discover Our Residences
             </h2>
-            <div className="mt-2.5 flex flex-wrap gap-1">
-              {detail.highlightTags.map((tag) => (
-                <span key={tag} className="rounded-full px-2 py-0.5 text-[9px] font-medium border border-[#C5A880]/40 bg-[#C5A880]/10 text-[#C5A880] uppercase tracking-wide">
-                  {tag}
-                </span>
-              ))}
-              {detail.audienceTags.map((tag) => (
-                <span key={tag} className="rounded-full bg-[#1A1A1A]/5 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[#1A1A1A]/60">
-                  {tag}
-                </span>
-              ))}
-            </div>
-            <p className="mt-3.5 text-xs md:text-sm leading-relaxed text-[#1A1A1A]/70">{residence.tagline}</p>
-            <p className="mt-2 inline-flex items-center gap-1 text-[11px] text-[#1A1A1A]/50">
-              <MapPin className="size-3 text-[#1A1A1A]" />
-              {residence.location}
-            </p>
-          </header>
-
-          {/* Specs 八宫格网格大面版 */}
-          <section className="mt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-px overflow-hidden rounded-xl border border-[#1A1A1A]/[0.06] bg-[#1A1A1A]/[0.05]">
-              {(Object.keys(AMENITY_LABELS) as AmenityKey[]).map((key) => {
-                const items = (detail.amenityGrid as any)?.[key] || [];
-                return (
-                  <div key={key} className="px-4 py-3.5 md:px-6 md:py-5" style={{ backgroundColor: WARM_CREAM }}>
-                    <h3 className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#1A1A1A]/40">{AMENITY_LABELS[key]}</h3>
-                    <ul className="mt-1.5 space-y-0.5">
-                      {items.map((item: string) => (
-                        <li key={item} className="text-xs text-[#1A1A1A]/85 leading-relaxed font-semibold tracking-wide">{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )
-              })}
-            </div>
-          </section>
-
-          {/* 楼层层级交互 */}
-          {detail.floors.length > 0 && (
-            <section className="mt-10 space-y-10">
-              {detail.floors.map((floor) => {
-                const floorGender: string | undefined = (floor as any).gender;
-                return (
-                  <div key={floor.label} className="border-t border-zinc-200/60 pt-8 first:border-t-0 first:pt-0">
-                    <div className="flex items-center justify-between gap-4 mb-4">
-                      <h4 className="font-serif text-sm font-bold tracking-wide uppercase text-[#1A1A1A]">{floor.label}</h4>
-                      {floorGender && <span className="px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border bg-zinc-50 border-zinc-200 text-zinc-700">{floorGender}</span>}
-                    </div>
-
-                    {/* 公共设施区 */}
-                    <div className="mb-5">
-                      <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-zinc-400 mb-2">Shared Spaces · 点击切换设施</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {floor.commonAreas?.map((area) => {
-                          const isCurrent = activeItemLabel === `${floor.label} - ${area.name}`
-                          return (
-                            <button
-                              key={`${floor.label}-${area.name}`}
-                              type="button"
-                              onClick={() => {
-                                if (area.image) {
-                                  setActiveImage(area.image)
-                                  setActiveItemLabel(`${floor.label} - ${area.name}`)
-                                }
-                              }}
-                              className={cn(
-                                "inline-flex items-center gap-1 rounded-md border px-2.5 py-1.5 text-xs font-semibold transition-all duration-200 cursor-pointer active:scale-98 focus:outline-none",
-                                isCurrent ? "border-[#C5A880] bg-[#C5A880]/10 text-[#1A1A1A] font-bold shadow-sm" : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300"
-                              )}
-                            >
-                              <Layers className={cn("size-3", isCurrent ? "text-[#C5A880]" : "text-zinc-400")} />
-                              {area.name}
-                            </button>
-                          )
-                        })}
-                      </div>
-                    </div>
-
-                    {/* 房间九宫格 */}
-                    <div>
-                      <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-zinc-400 mb-2.5">{floor.label} ROOMS · 点击看对应照片</p>
-                      <div className="grid grid-cols-2 gap-2.5">
-                        {floor.rooms?.map((room, roomIdx) => {
-                          const isCurrentRoom = activeItemLabel === `${floor.label} - ${room.name}`
-                          return (
-                            <button
-                              key={`${floor.label}-${room.name}-${roomIdx}`}
-                              type="button"
-                              onClick={() => {
-                                if (room.image) {
-                                  setActiveImage(room.image)
-                                  setActiveItemLabel(`${floor.label} - ${room.name}`)
-                                }
-                              }}
-                              className={cn(
-                                "group/room flex items-center justify-between rounded-xl border px-3.5 py-3 text-left transition-all duration-300 cursor-pointer w-full min-h-[48px] focus:outline-none",
-                                isCurrentRoom ? "border-[#C5A880] bg-white shadow-[0_6px_20px_rgba(197,168,128,0.12)] ring-2 ring-[#C5A880]/15 z-10" : "border-zinc-200 bg-white hover:border-zinc-300"
-                              )}
-                            >
-                              <span className={cn("font-sans text-xs sm:text-sm font-semibold tracking-wide transition-colors truncate max-w-[85%]", isCurrentRoom ? "text-[#C5A880]" : "text-[#1A1A1A]")}>
-                                {room.name}
-                              </span>
-                              <ImageIcon className={cn("size-3.5 transition-all duration-300 shrink-0", isCurrentRoom ? "text-[#C5A880] scale-105" : "text-zinc-300")} />
-                            </button>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
-            </section>
-          )}
-
-          {/* ========================================================================= */}
-          {/* 🌟 极致重塑 1：360° 外部全景环境漫游大舱（杜绝未开发感，升级为艺术画册质感） */}
-          {/* ========================================================================= */}
-          <section className="mt-10 border-t border-zinc-200/60 pt-8">
-            <div className="flex items-center justify-between gap-4 mb-2.5">
-              <h4 className="font-serif text-sm font-bold tracking-wide uppercase text-[#1A1A1A]">
-                360° Exterior Virtual Tour
-              </h4>
-              <span className="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-[#C5A880]/10 text-[#C5A880] border border-[#C5A880]/20">
-                Coming Soon
-              </span>
-            </div>
-            
-            <p className="text-[11px] text-zinc-400 leading-relaxed">
-              An immersive 360° exterior surrounding tour of the {residence.name} neighborhood environment will be integrated below.
-            </p>
-            
-            {/* 判定是否有全景链接。有则渲染真实 Iframe，无则渲染高奢质感的艺术预留墙 */}
-            {detail.virtualTourUrl ? (
-              <div className="mt-4 overflow-hidden rounded-xl border border-zinc-200 aspect-[21/9]">
-                <iframe src={detail.virtualTourUrl} className="size-full border-0" allowFullScreen />
-              </div>
-            ) : (
-              <div className="group mt-4 relative aspect-[21/9] w-full overflow-hidden rounded-xl border border-dashed border-zinc-300 bg-white/40 flex flex-col items-center justify-center gap-2 transition-all duration-300 hover:bg-white/80">
-                <Compass className="size-5 text-[#C5A880] transition-transform duration-700 group-hover:rotate-45" />
-                <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-zinc-400 select-none">
-                  [ Exterior 360° Panorama Chamber ]
-                </span>
-              </div>
-            )}
-          </section>
-
-          {/* ========================================================================= */}
-          {/* 🌟 极致重塑 2：Where is... 地图导航舱（完美实现：大屏自由拖拽放大，手机手势保护，App外跳） */}
-          {/* ========================================================================= */}
-          <section className="mt-10 border-t border-zinc-200/60 pt-8">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2.5">
-              <h3 className="text-sm font-bold tracking-tight text-[#1A1A1A]">
-                Where is {residence.name} Residence?
-              </h3>
-              
-              {/* 如果数据里配了真实跳转链接，就高亮亮出“打开 Google Map”的跳转小纽扣 */}
-              {detail.googleMapsUrl && (
-                <a
-                  href={detail.googleMapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#C5A880] hover:opacity-80 transition-opacity"
-                >
-                  <Navigation className="size-3.5 fill-current" />
-                  Open in Google Maps →
-                </a>
-              )}
-            </div>
-            
-            <p className="text-[11px] text-zinc-400 leading-relaxed mb-4">
-              {detail.mapCaption}
-            </p>
-            
-            {/* 核心物理网格：加载真实的可拖拽地图，带手势保护层 */}
-            <div className="group/map relative overflow-hidden rounded-xl border border-[#1A1A1A]/[0.06] bg-[#EDECEA] aspect-[16/10] w-full shadow-sm">
-              {detail.mapEmbedUrl ? (
-                <>
-                  {/* 1. 真实的免费 Google Map Iframe 舱，电脑端100%可随便拉、随便缩放 */}
-                  <iframe
-                    src={detail.mapEmbedUrl}
-                    className="size-full border-0 pointer-events-auto"
-                    allowFullScreen={false}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  />
-                  {/* 2. 手机端阻尼盾牌：通过 md:hidden 让它在电脑端隐身。在手机端，防止用户一摸地图页面就划不动 */}
-                  <div className="absolute inset-0 bg-transparent pointer-events-none md:hidden" />
-                </>
-              ) : (
-                <img src={detail.mapImage || '/placeholder.svg'} alt="Map location" className="size-full object-cover" />
-              )}
-            </div>
-          </section>
-
-        </div>
-      </div>
-
-      {/* 底部吸附固定预约看房舱 */}
-      <div
-        className={cn(
-          'fixed inset-x-0 bottom-0 z-[60] px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 transition-all duration-500 ease-out sm:px-6 md:absolute md:right-0 md:left-auto md:w-[55%] lg:w-[50%]',
-          visible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0',
-        )}
-        style={{
-          backgroundColor: WARM_CREAM,
-          boxShadow: '0 -12px 30px -5px rgba(249, 249, 247, 0.95)',
-          borderTop: '1px solid rgba(26, 26, 26, 0.04)'
-        }}
-      >
-        <a
-          href={whatsAppUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mx-auto flex max-w-md items-center justify-center gap-2 rounded-full px-5 py-3 text-xs font-bold tracking-wide shadow-md transition-transform duration-300 active:scale-[0.97] bg-[#C5A880] text-[#1A1A1A] whitespace-nowrap"
-        >
-          <MessageCircle className="size-4 shrink-0" />
-          WhatsApp 预约看房 // Book Tour
-        </a>
-      </div>
-
-      {/* 灯箱舱 */}
-      {isLightboxOpen && (
-        <div onClick={() => setIsLightboxOpen(false)} className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm cursor-zoom-out">
-          <button type="button" onClick={() => setIsLightboxOpen(false)} className="absolute top-4 right-4 z-[110] inline-flex size-10 items-center justify-center rounded-full bg-white/10 text-white/80">
-            <X className="size-5" />
-          </button>
-          <div className="w-full h-full max-w-[95vw] max-h-[90vh] flex flex-col items-center justify-center p-2">
-            <img src={activeImage} alt={activeItemLabel} className="max-w-full max-h-full object-contain rounded-md shadow-2xl" onClick={(e) => e.stopPropagation()} />
-            <p className="mt-3 text-xs font-medium tracking-widest text-white/40 uppercase">
-              {residence.name.toUpperCase()} RESIDENCE // {activeItemLabel}
+            <p
+              className="mt-4 text-pretty leading-relaxed"
+              style={{ color: '#1A1A1AA6' }}
+            >
+              Five distinct residences across Sibu, each fully furnished and
+              ready for you to move in. Tap any card to explore amenities and location.
             </p>
           </div>
+
+          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {residences.map((r) => (
+              <article
+                key={r.id}
+                id={r.id}
+                // 🌟 1. 语义化拦截：如果是即将开业，取消 button 角色和焦点
+                role={r.comingSoon ? undefined : "button"}
+                tabIndex={r.comingSoon ? undefined : 0}
+                onClick={() => {
+                  // 🌟 2. 点击拦截：如果是即将开业，直接 return 绝不弹出详情面板
+                  if (r.comingSoon) return
+                  handleOpen(r)
+                }}
+                onKeyDown={(e) => {
+                  // 🌟 3. 键盘拦截：如果是即将开业，同样死死拦截
+                  if (r.comingSoon) return
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    handleOpen(r)
+                  }
+                }}
+                // 🌟 4. 视觉反馈与动效拦截
+                className={cn(
+                  "group flex flex-col scroll-mt-28 overflow-hidden rounded-2xl border border-zinc-200 bg-white transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/10",
+                  r.comingSoon
+                    ? "cursor-default opacity-95" // 🔒 即将开业：指针变回普通箭头，拿掉所有 hover 位移、放大、亮框、浮起阴影！
+                    : "cursor-pointer hover:-translate-y-1 hover:border-zinc-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.015)]" // 🔓 正常房源：保留丝滑动效
+                )}
+              >
+                <div className="relative aspect-[4/3] overflow-hidden shrink-0">
+                  <img
+                    src={r.image || '/placeholder.svg'}
+                    alt={`${r.name} residence interior`}
+                    className={cn(
+                      "size-full object-cover transition-transform duration-700 ease-out",
+                      !r.comingSoon && "group-hover:scale-105" // 🌟 5. 图片缩放拦截：即将开业时，图片不跟随鼠标 hover 放大
+                    )}
+                  />
+                  <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/45 to-transparent" />
+                  {r.comingSoon && (
+                    <span
+                      className="absolute left-4 top-4 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wider"
+                      style={{ backgroundColor: '#C5A880', color: '#1A1A1A' }}
+                    >
+                      Opening Soon
+                    </span>
+                  )}
+                  <span className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 text-xs font-medium text-white/90">
+                    <MapPin className="size-3.5" style={{ color: '#C5A880' }} />
+                    {r.location}
+                  </span>
+                </div>
+
+                <div className="flex flex-col gap-4 p-6 flex-1">
+                  <div>
+                    <h3 
+                      className={cn(
+                        "text-xl font-semibold tracking-tight transition-opacity",
+                        !r.comingSoon && "group-hover:opacity-80"
+                      )} 
+                      style={{ color: '#1A1A1A' }}
+                    >
+                      {r.name}
+                    </h3>
+                      
+                    <p className="mt-1.5 text-sm leading-relaxed" style={{ color: '#1A1A1A99' }}>
+                      {r.tagline}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {r.facilities.map((f) => (
+                      <span
+                        key={f}
+                        className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium"
+                        style={{ backgroundColor: '#F3F4F6', color: '#1A1A1A' }}
+                      >
+                        <Check className="size-3 text-zinc-500" />
+                        {f}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* 🌟 6. 底部文案拦截：即将开业时，自动将引导文案洗成高冷的 Stay Tuned */}
+                  <p
+                    className="text-[11px] mt-auto pt-4 font-medium uppercase tracking-[0.2em] transition-opacity group-hover:opacity-70"
+                    style={{ color: '#1A1A1A66' }}
+                  >
+                    {r.comingSoon ? 'Stay Tuned // 敬请期待' : 'Tap to explore →'}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
+      </section>
+
+      {activeResidence && (
+        <ResidenceDetailPanel
+          residence={activeResidence}
+          onClose={handleClose}
+          isClosing={closing}
+        />
       )}
-    </div>
+    </>
   )
 }

@@ -34,6 +34,9 @@ export type ResidenceDetail = {
   floors: FloorPlan[]
   mapImage: string
   mapCaption: string
+
+  mapImageMobile?: string
+  
   mapEmbedUrl?: string   // Google Map 嵌入式 Iframe 链接
   googleMapsUrl?: string // 真实 Google Map 外跳链接
   virtualTourUrl?: string // 360 全景嵌入链接（如 Kuula 或 Pannellum）
@@ -44,7 +47,7 @@ export const residenceDetails: Record<string, ResidenceDetail> = {
   parkway: {
     audienceTags: ['UNDERGRADUATE', 'POSTGRADUATE', 'WORKING ADULT'],
     highlightTags: ['Fully Furnished'],
-    heroImages: ['/images/parkway/1st Floor/P1 - Room/P1C - Single Window.png'],
+    heroImages: ['/images/parkway/1st floor/P1 - Room/P1C - Single Window.png'],
     // 🌟 完美对齐 8 大硬核租赁指标
     amenityGrid: {
       propertyType: ['Shoplot - Fully furnished hostel-style accommodation'],
@@ -109,10 +112,11 @@ export const residenceDetails: Record<string, ResidenceDetail> = {
         ],
       },
     ],
-    mapImage: '/images/parkway.png',
-    mapCaption: 'Sibu Town Centre — steps from the park and daily conveniences.',
-    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3986.36835263636!2d111.8268685!3d2.2934177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31fa4dc467000001%3A0x6b7fa43666b6e410!2sSibu%20Town%20Square!5e0!3m2!1szh-CN!2smy!4v1710000000000!3m2!1szh-CN!2smy',
-    googleMapsUrl: 'https://maps.app.goo.gl/BBNP6vGZf1v66MBy9',
+    mapImage: '/images/Parkway.JPG',
+    mapImageMobile: '/images/parkway-mobile.jpg',
+    mapCaption: 'Jalan Wawasan — with cafés, restaurants, and daily essentials just moments away.',
+    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d498.31022909945233!2d111.8354458850863!3d2.343344251943304!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2smy!4v1782645486890!5m2!1sen!2smy',
+    googleMapsUrl: 'https://www.google.com/maps/search/?api=1&query=2.343483,%20111.835348',
     virtualTourUrl: ''
   },
   
@@ -186,8 +190,9 @@ export const residenceDetails: Record<string, ResidenceDetail> = {
         ],
       },
     ],
-    mapImage: '/images/parkway.png',
-    mapCaption: 'Sibu Town Centre — steps from the park and daily conveniences.',
+    mapImage: '/images/Parkway Residence - Map.png',
+    mapImageMobile: '/images/Parkway Mobile.jpg',
+    mapCaption: 'Jalan Wawasan — with cafés, restaurants, and daily essentials just moments away.',
     mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3986.36835263636!2d111.8268685!3d2.2934177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31fa4dc467000001%3A0x6b7fa43666b6e410!2sSibu%20Town%20Square!5e0!3m2!1szh-CN!2smy!4v1710000000000!3m2!1szh-CN!2smy',
     googleMapsUrl: 'https://maps.app.goo.gl/BBNP6vGZf1v66MBy9',
     virtualTourUrl: ''
@@ -196,7 +201,7 @@ export const residenceDetails: Record<string, ResidenceDetail> = {
   norway: {
     audienceTags: ['UNDERGRADUATE', 'POSTGRADUATE', 'WORKING ADULT'],
     highlightTags: ['Fully Furnished'],
-    heroImages: ['/images/norway/2nd Floor/N2 - Room/N2I - Double Window.png'],
+    heroImages: ['/images/norway/2nd floor/N2 - Room/N2I - Double Window.png'],
 
     amenityGrid: {
       propertyType: ['Shoplot - Fully furnished hostel-style accommodation'],
@@ -226,11 +231,11 @@ export const residenceDetails: Record<string, ResidenceDetail> = {
       {
         label: 'Second Floor',
         commonAreas: [
-          { name: 'Dining', image: '/images/norway/2nd Floor/N2 - Common Space/N2 - Dining Area.png' },
-          { name: 'Kitchen', image: '/images/norway/2nd Floor/N2 - Common Space/N2 - Kitchen.png' },
-          { name: 'Bathroom', image: '/images/norway/2nd Floor/N2 - Common Space/N2 - Bathroom.png' },
-          { name: 'Corridor', image: '/images/norway/2nd Floor/N2 - Common Space/N2 - Corridor.png' },
-          { name: 'Entrance', image: '/images/norway/2nd Floor/N2 - Common Space/N2 - Entrance.png' }, // 👈 想要多加的 shared space 示范
+          { name: 'Dining', image: '/images/norway/2nd floor/N2 - Common Space/N2 - Dining Area.png' },
+          { name: 'Kitchen', image: '/images/norway/2nd floor/N2 - Common Space/N2 - Kitchen.png' },
+          { name: 'Bathroom', image: '/images/norway/2nd floor/N2 - Common Space/N2 - Bathroom.png' },
+          { name: 'Corridor', image: '/images/norway/2nd floor/N2 - Common Space/N2 - Corridor.png' },
+          { name: 'Entrance', image: '/images/norway/2nd floor/N2 - Common Space/N2 - Entrance.png' }, // 👈 想要多加的 shared space 示范
         ],
         rooms: [
           { name: 'Room N2A', image: '/images/norway/2nd floor/N2 - Room/N2A - Single Window.png' },
@@ -247,11 +252,11 @@ export const residenceDetails: Record<string, ResidenceDetail> = {
       {
         label: 'Third Floor',
         commonAreas: [
-          { name: 'Dining', image: '/images/norway/3rd Floor/N3 - Common Space/N3 - Dining Area.png' },
-          { name: 'Kitchen', image: '/images/norway/3rd Floor/N3 - Common Space/N3 - Kitchen.png' },
-          { name: 'Bathroom', image: '/images/norway/3rd Floor/N3 - Common Space/N3 - Bathroom.png' },
-          { name: 'Corridor', image: '/images/norway/3rd Floor/N3 - Common Space/N3 - Corridor.png' },
-          { name: 'Entrance', image: '/images/norway/3rd Floor/N3 - Common Space/N3 - Entrance.png' }, // 👈 想要多加的 shared space 示范
+          { name: 'Dining', image: '/images/norway/3rd floor/N3 - Common Space/N3 - Dining Area.png' },
+          { name: 'Kitchen', image: '/images/norway/3rd floor/N3 - Common Space/N3 - Kitchen.png' },
+          { name: 'Bathroom', image: '/images/norway/3rd floor/N3 - Common Space/N3 - Bathroom.png' },
+          { name: 'Corridor', image: '/images/norway/3rd floor/N3 - Common Space/N3 - Corridor.png' },
+          { name: 'Entrance', image: '/images/norway/3rd floor/N3 - Common Space/N3 - Entrance.png' }, // 👈 想要多加的 shared space 示范
         ],
         rooms: [
           { name: 'Room N3A', image: '/images/norway/3rd floor/N3 - Room/N3A - Single Window.png' },
@@ -267,7 +272,7 @@ export const residenceDetails: Record<string, ResidenceDetail> = {
       },
     ],
     mapImage: '/images/parkway.png',
-    mapCaption: 'Sibu Town Centre — steps from the park and daily conveniences.',
+    mapCaption: 'Unicity — ideal for students, with easy access to campus and everyday conveniences.',
     mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3986.36835263636!2d111.8268685!3d2.2934177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31fa4dc467000001%3A0x6b7fa43666b6e410!2sSibu%20Town%20Square!5e0!3m2!1szh-CN!2smy!4v1710000000000!3m2!1szh-CN!2smy',
     googleMapsUrl: 'https://maps.app.goo.gl/BBNP6vGZf1v66MBy9',
     virtualTourUrl: ''
@@ -306,22 +311,22 @@ export const residenceDetails: Record<string, ResidenceDetail> = {
       {
         label: 'FIRST FLOOR',
         commonAreas: [
-          { name: 'Dining', image: '/images/steinway/1st Floor/S1 - Common Space/S1 - Dining Area.png' },
-          { name: 'Kitchen', image: '/images/steinway/1st floor/S1 - Common Space/S1 - Kitchen.png' },
-          { name: 'Bathroom', image: '/images/steinway/1st floor/S1 - Common Space/S1 - Bathroom.png' },
-          { name: 'Corridor', image: '/images/steinway/1st floor/S1 - Common Space/S1 - Corridor.png' },
-          { name: 'Dry-Yard', image: '/images/steinway/1st floor/S1 - Common Space/S1 - Dry-Yard.png' }, // 👈 想要多加的 shared space 示范
+          { name: 'Dining', image: '/images/steinway/1st-floor/S1-common-space/S1-dining-area.png' },
+          { name: 'Kitchen', image: '/images/steinway/1st-floor/S1-common-space/S1-kitchen.png' },
+          { name: 'Bathroom', image: '/images/steinway/1st-floor/S1-common-space/S1-bathroom.png' },
+          { name: 'Corridor', image: '/images/steinway/1st-floor/S1-common-space/S1-corridor.png' },
+          { name: 'Dry-Yard', image: '/images/steinway/1st-floor/S1-common-space/S1-dry-yard.png' }, // 👈 想要多加的 shared space 示范
         ],
         rooms: [
-          { name: 'Room S1A', image: '/images/steinway/1st floor/S1 - Room/S1A - Single Window (Male).png' },
-          { name: 'Room S1B', image: '/images/steinway/1st floor/S1 - Room/S1B - Single Window (Male).png' },
-          { name: 'Room S1C', image: '/images/steinway/1st floor/S1 - Room/S1C - Single Skylight (Male).png' },
-          { name: 'Room S1D', image: '/images/steinway/1st floor/S1 - Room/S1D - Single Window (Male).png' },
-          { name: 'Room S1E', image: '/images/steinway/1st floor/S1 - Room/S1E - Single Skylight (Male).png' },
-          { name: 'Room S1F', image: '/images/steinway/1st floor/S1 - Room/S1F - Single Window (Male).png' },
-          { name: 'Room S1G', image: '/images/steinway/1st floor/S1 - Room/S1G - Single Window (Male).png' },
-          { name: 'Room S1H', image: '/images/steinway/1st floor/S1 - Room/S1H - Single Window (Male).png' },
-          { name: 'Room S1I', image: '/images/steinway/1st floor/S1 - Room/S1I - Single Window (Male).png' },
+          { name: 'Room S1A', image: '/images/steinway/1st-floor/S1-room/S1A - Single Window (Male).png' },
+          { name: 'Room S1B', image: '/images/steinway/1st-floor/S1-room/S1B - Single Window (Male).png' },
+          { name: 'Room S1C', image: '/images/steinway/1st-floor/S1-room/S1C - Single Skylight (Male).png' },
+          { name: 'Room S1D', image: '/images/steinway/1st-floor/S1-room/S1D - Single Window (Male).png' },
+          { name: 'Room S1E', image: '/images/steinway/1st-floor/S1-room/S1E - Single Skylight (Male).png' },
+          { name: 'Room S1F', image: '/images/steinway/1st-floor/S1-room/S1F - Single Window (Male).png' },
+          { name: 'Room S1G', image: '/images/steinway/1st-floor/S1-room/S1G - Single Window (Male).png' },
+          { name: 'Room S1H', image: '/images/steinway/1st-floor/S1-room/S1H - Single Window (Male).png' },
+          { name: 'Room S1I', image: '/images/steinway/1st-floor/S1-room/S1I - Single Window (Male).png' },
         ],
       },
       {
@@ -346,7 +351,7 @@ export const residenceDetails: Record<string, ResidenceDetail> = {
       },
     ],
     mapImage: '/images/parkway.png',
-    mapCaption: 'Sibu Town Centre — steps from the park and daily conveniences.',
+    mapCaption: 'Jalan Wawasan — with cafés, restaurants, and daily essentials just moments away.',
     mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3986.36835263636!2d111.8268685!3d2.2934177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31fa4dc467000001%3A0x6b7fa43666b6e410!2sSibu%20Town%20Square!5e0!3m2!1szh-CN!2smy!4v1710000000000!3m2!1szh-CN!2smy',
     googleMapsUrl: 'https://maps.app.goo.gl/BBNP6vGZf1v66MBy9',
     virtualTourUrl: ''
@@ -429,8 +434,8 @@ export const residenceDetails: Record<string, ResidenceDetail> = {
         ],
       },
     ],
-    mapImage: '/images/parkway.png',
-    mapCaption: 'Sibu Town Centre — steps from the park and daily conveniences.',
+    mapImage: '/images/velway.png',
+    mapCaption: 'Unicity — ideal for students, with easy access to campus and everyday conveniences.',
     mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3986.36835263636!2d111.8268685!3d2.2934177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31fa4dc467000001%3A0x6b7fa43666b6e410!2sSibu%20Town%20Square!5e0!3m2!1szh-CN!2smy!4v1710000000000!3m2!1szh-CN!2smy',
     googleMapsUrl: 'https://maps.app.goo.gl/BBNP6vGZf1v66MBy9',
     virtualTourUrl: ''

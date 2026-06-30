@@ -1,7 +1,7 @@
 const stats = [
   { value: '2021', label: 'Founded in Sibu' },
   { value: '5', label: 'Residences' },
-  { value: '200+', label: 'Happy tenants' },
+  { value: '70+', label: 'Fully Furnished Rooms' },
 ]
 
 export function About() {
