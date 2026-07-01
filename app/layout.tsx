@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#F9F9F7',
+  themeColor: '#1A1A1A',
   width: 'device-width',
   initialScale: 1,
 }
@@ -45,8 +45,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} bg-background`}>
-      <body className="font-sans antialiased">
+    // 🌟 重点改这里：给 html 加上 bg-[#1A1A1A]（兜底背景）和 overscroll-none（防止上下拖拽回弹露出底层白画布）
+    <html 
+      lang="en" 
+      className={`${inter.variable} bg-[#1A1A1A] overscroll-none`}
+      style={{ backgroundColor: '#1A1A1A' }} // 双重保险
+    >
+      {/* 🌟 重点改这里：给 body 也加上统一的暗黑底色 */}
+      <body className="font-sans antialiased bg-[#1A1A1A] text-white">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
