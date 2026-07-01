@@ -18,7 +18,7 @@ export function Hero() {
       {/* 背景大片层 */}
       <div className="absolute inset-0 -z-10">
         <img
-          src="/images/Norway Residence - Main Entrance.png"
+          src="/images/Norway Residence - Main Entrance.webp"
           alt=""
           aria-hidden="true"
           className="size-full object-cover opacity-35"
